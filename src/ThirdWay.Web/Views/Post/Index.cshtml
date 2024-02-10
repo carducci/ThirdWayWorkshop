@@ -1,0 +1,20 @@
+﻿@model List<ThirdWay.Data.Model.Post>
+@{
+    ViewData["Title"] = "All Posts";
+}
+
+@foreach (var post in Model)
+{
+    <div class="card mb-3">
+        <img src="@post.ImageUrl" class="card-img-top" alt=""/>
+        <div class="card-body">
+            <h5 class="card-title">@post.Title</h5>
+            <p class="card-text">
+                @post.Description
+            </p>
+            <p class="card-text">
+                <small class="text-muted">Last updated @post.LastUpdated</small>
+            </p>
+        </div>
+    </div>
+}

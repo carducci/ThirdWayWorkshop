@@ -22,4 +22,9 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Pages\" />
+    <Folder Include="Views\Post\" />
+  </ItemGroup>
+
 </Project>
