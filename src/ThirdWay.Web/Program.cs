@@ -1,7 +1,7 @@
-var builder = WebApplication.CreateBuilder(args);
+using ThirdWay.Web.Extensions;
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.ConfigureServices(builder.Configuration);
 
 var app = builder.Build();
 
