@@ -11,23 +11,23 @@ namespace ThirdWay.Data.Model
 
         [Required]
         [StringLength(1024)]
-        public string Uri { get; set; }
+        public string Uri { get; set; } = null!;
 
         public DateTime LastUpdated { get; set; }
 
-        public DateTime PublisheDateTime { get; set; }
+        public DateTime PublishDateTime { get; set; }
 
         [Required]
         [ForeignKey("Feed")]
         public int FeedId { get; set; }
-        public virtual Feed Feed { get; set; }
+        public virtual Feed Feed { get; set; } = null!;
 
         [Required]
         [StringLength(64)]
-        public string Title { get; set; }
+        public string Title { get; set; } = null!;
 
         [StringLength(255)]
-        public string ImageUrl { get; set; } 
+        public string ImageUrl { get; set; } = null!;
 
         [Required]
         [StringLength(255)]

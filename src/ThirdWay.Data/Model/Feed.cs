@@ -15,11 +15,11 @@ namespace ThirdWay.Data.Model
 
         [Required]
         [StringLength(512)]
-        public string Uri { get; set; }
+        public string Uri { get; set; } = null!;
 
         [Required]
         [StringLength(1024)]
-        public string Url { get; set; }
+        public string Url { get; set; } = null!;
 
         [Required]
         [StringLength(64)]

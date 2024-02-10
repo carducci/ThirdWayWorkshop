@@ -14,10 +14,44 @@ namespace ThirdWay.Web.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        [HttpGet("/Post")]
+        public IActionResult All()
         {
             var posts = _context.Posts.ToList();
-            return View(posts);
+            ViewData["title"] = "All Posts";
+
+            return View("list",posts);
+        }
+
+        [HttpGet("/Post/Status/Unread")]
+        public IActionResult Unread()
+        {
+            var posts = _context.Posts.Where(p=>p.IsRead==false).ToList();
+            ViewData["title"] = "Unread Posts";
+
+            return View("list", posts);
+        }
+
+        [HttpGet("/Post/Status/Favorite")]
+        public IActionResult Favorite()
+        {
+            ViewData["title"] = "Favorite Posts";
+            var posts = _context.Posts.Where(p => p.IsRead == false).ToList();
+
+            return View("list", posts);
+        }
+
+        [HttpGet("/Post/Id/{id}")]
+        public IActionResult Post(int id)
+        {
+            var post = _context.Posts.FirstOrDefault(p => p.Id == id);
+            
+            if(post == null)
+                return NotFound();
+
+            ViewData["title"] = post.Title;
+            
+            return View(post);
         }
     }
 }

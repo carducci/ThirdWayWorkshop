@@ -8,13 +8,13 @@
     <div class="card mb-3">
         <img src="@post.ImageUrl" class="card-img-top" alt=""/>
         <div class="card-body">
-            <h5 class="card-title">@post.Title</h5>
+            <h5 class="card-title"><a href="/Post/Id/@post.Id">@post.Title</a></h5>
             <p class="card-text">
                 @post.Description
             </p>
-            <p class="card-text">
-                <small class="text-muted">Last updated @post.LastUpdated</small>
-            </p>
+        </div>
+        <div class="card-footer">
+            <small class="text-body-secondary">Last updated @post.LastUpdated</small>
         </div>
     </div>
 }

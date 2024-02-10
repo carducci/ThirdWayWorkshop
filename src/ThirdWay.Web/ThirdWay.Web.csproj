@@ -17,14 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="reader.db">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Pages\" />
-    <Folder Include="Views\Post\" />
   </ItemGroup>
 
 </Project>

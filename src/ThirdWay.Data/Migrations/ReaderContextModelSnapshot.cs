@@ -108,7 +108,7 @@ namespace ThirdWay.Data.Migrations
                     b.Property<DateTime>("LastUpdated")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("PublisheDateTime")
+                    b.Property<DateTime>("PublishDateTime")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")
@@ -140,7 +140,7 @@ namespace ThirdWay.Data.Migrations
                             IsFavorite = false,
                             IsRead = false,
                             LastUpdated = new DateTime(2023, 12, 16, 17, 0, 0, 0, DateTimeKind.Local),
-                            PublisheDateTime = new DateTime(2023, 12, 16, 17, 0, 0, 0, DateTimeKind.Local),
+                            PublishDateTime = new DateTime(2023, 12, 16, 17, 0, 0, 0, DateTimeKind.Local),
                             Title = "Reflection an a Decade and a Half on Dvorak",
                             Uri = "https://sufficiently-advanced.technology/post/reflecting-on-dvorak"
                         },
@@ -156,7 +156,7 @@ namespace ThirdWay.Data.Migrations
                             IsFavorite = false,
                             IsRead = false,
                             LastUpdated = new DateTime(2024, 1, 23, 17, 0, 0, 0, DateTimeKind.Local),
-                            PublisheDateTime = new DateTime(2024, 1, 23, 17, 0, 0, 0, DateTimeKind.Local),
+                            PublishDateTime = new DateTime(2024, 1, 23, 17, 0, 0, 0, DateTimeKind.Local),
                             Title = "Third-Way Web Development Part I - History",
                             Uri = "https://sufficiently-advanced.technology/post/third-way-web-development-part-i"
                         },
@@ -172,7 +172,7 @@ namespace ThirdWay.Data.Migrations
                             IsFavorite = false,
                             IsRead = false,
                             LastUpdated = new DateTime(2024, 1, 30, 17, 0, 0, 0, DateTimeKind.Local),
-                            PublisheDateTime = new DateTime(2024, 1, 30, 17, 0, 0, 0, DateTimeKind.Local),
+                            PublishDateTime = new DateTime(2024, 1, 30, 17, 0, 0, 0, DateTimeKind.Local),
                             Title = "Third-Way Web Development Part II - Hypermedia 2.0",
                             Uri = "https://sufficiently-advanced.technology/post/third-way-web-development-part-ii"
                         });
