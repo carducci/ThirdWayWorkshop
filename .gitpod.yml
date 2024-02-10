@@ -1,1 +1,8 @@
+
 image: gitpod/workspace-dotnet
+vscode:
+  extensions:
+    - muhammad-sammy.csharp
+    - ms-dotnettools.vscode-dotnet-runtime
+    - ms-azuretools.vscode-docker
+    - eamodio.gitlens
