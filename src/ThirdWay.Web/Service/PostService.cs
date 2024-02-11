@@ -1,6 +1,5 @@
 ﻿using ThirdWay.Data;
 using ThirdWay.Data.Model;
-using ThirdWay.Web.Controllers;
 
 namespace ThirdWay.Web.Service
 {
@@ -19,10 +18,10 @@ namespace ThirdWay.Web.Service
 
     public class PostService : IDisposable, IPostService
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<PostService> _logger;
         private readonly ReaderContext _context;
 
-        public PostService(ILogger<HomeController> logger, ReaderContext context)
+        public PostService(ILogger<PostService> logger, ReaderContext context)
         {
             _logger = logger;
             _context = context;

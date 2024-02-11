@@ -6,10 +6,10 @@ namespace ThirdWay.Web.Controllers
 {
     public class PostController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<PostController> _logger;
         private readonly IPostService _postService;
 
-        public PostController(ILogger<HomeController> logger, IPostService postService)
+        public PostController(ILogger<PostController> logger, IPostService postService)
         {
             _logger = logger;
             _postService = postService;
