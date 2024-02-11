@@ -1,4 +1,5 @@
 ﻿using ThirdWay.Data;
+using ThirdWay.Web.Service;
 
 namespace ThirdWay.Web.Extensions
 {
@@ -9,6 +10,7 @@ namespace ThirdWay.Web.Extensions
             // Add services to the container.
             services.AddControllersWithViews();
             services.AddEntityFrameworkSqlite().AddDbContext<ReaderContext>();
+            services.AddScoped<IPostService, PostService>();
             
             return services;
         }

@@ -1,42 +1,43 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ThirdWay.Data;
+using ThirdWay.Web.Service;
 
 namespace ThirdWay.Web.Controllers
 {
     public class PostController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly ReaderContext _context;
+        private readonly IPostService _postService;
 
-        public PostController(ILogger<HomeController> logger, ReaderContext context)
+        public PostController(ILogger<HomeController> logger, IPostService postService)
         {
             _logger = logger;
-            _context = context;
+            _postService = postService;
         }
 
         [HttpGet("/Post")]
-        public IActionResult All()
+        public IActionResult All(int page = 1)
         {
-            var posts = _context.Posts.ToList();
+            var posts = _postService.GetAll();
             ViewData["title"] = "All Posts";
 
             return View("list",posts);
         }
 
         [HttpGet("/Post/Status/Unread")]
-        public IActionResult Unread()
+        public IActionResult Unread(int page = 1)
         {
-            var posts = _context.Posts.Where(p=>p.IsRead==false).ToList();
+            var posts = _postService.GetUnread();
             ViewData["title"] = "Unread Posts";
 
             return View("list", posts);
         }
 
         [HttpGet("/Post/Status/Favorite")]
-        public IActionResult Favorite()
+        public IActionResult Favorite(int page = 1)
         {
             ViewData["title"] = "Favorite Posts";
-            var posts = _context.Posts.Where(p => p.IsRead == false).ToList();
+            var posts = _postService.GetFavorite();
 
             return View("list", posts);
         }
@@ -44,8 +45,7 @@ namespace ThirdWay.Web.Controllers
         [HttpGet("/Post/Id/{id}")]
         public IActionResult Post(int id)
         {
-            var post = _context.Posts.FirstOrDefault(p => p.Id == id);
-            
+            var post = _postService.GetPost(id);
             if(post == null)
                 return NotFound();
 
