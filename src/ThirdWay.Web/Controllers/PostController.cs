@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ThirdWay.Data;
 using ThirdWay.Web.Service;
 
 namespace ThirdWay.Web.Controllers

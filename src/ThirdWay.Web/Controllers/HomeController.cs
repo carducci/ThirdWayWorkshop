@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using ThirdWay.Data;
+using ThirdWay.Data.Model;
 using ThirdWay.Web.Models;
 using ThirdWay.Web.Service;
 
@@ -19,10 +20,7 @@ namespace ThirdWay.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var feedService = new FeedService(_context);
-            await feedService.UpsertFeedAsync("https://sufficiently-advanced.technology/feed.xml");
-            var posts = _context.Posts.ToList();
-            return View(posts);
+            return RedirectToAction("All", "Post");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
