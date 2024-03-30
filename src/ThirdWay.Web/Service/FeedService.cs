@@ -1,5 +1,4 @@
 ﻿using ThirdWay.Data;
-using ThirdWay.Data.Model;
 
 namespace ThirdWay.Web.Service
 {
@@ -47,11 +46,9 @@ namespace ThirdWay.Web.Service
 
             foreach (var post in posts)
             {
-                if (!_context.Posts.Any(p => p.Uri == post.Uri))
-                {
-                    post.FeedId = feed.Id;
-                    _context.Posts.Add(post);
-                }
+                if (_context.Posts.Any(p => p.Uri == post.Uri)) continue;
+                post.FeedId = feed.Id;
+                _context.Posts.Add(post);
             }
 
             await _context.SaveChangesAsync();
