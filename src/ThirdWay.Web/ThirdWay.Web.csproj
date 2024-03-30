@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\ThirdWay.Feed\ThirdWay.Feed.csproj" />
     <ProjectReference Include="..\ThirdWay.Data\ThirdWay.Data.csproj" />
   </ItemGroup>
 

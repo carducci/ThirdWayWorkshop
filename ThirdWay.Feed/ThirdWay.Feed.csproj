@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CodeHollow.FeedReader" Version="1.2.6" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.60" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\src\ThirdWay.Data\ThirdWay.Data.csproj" />
+  </ItemGroup>
+
+</Project>

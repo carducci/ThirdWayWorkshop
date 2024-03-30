@@ -13,6 +13,10 @@ namespace ThirdWay.Data.Model
         [StringLength(1024)]
         public string Uri { get; set; } = null!;
 
+        [Required]
+        [StringLength(1024)]
+        public string UriHash { get; set; } = null!;
+
         public DateTime LastUpdated { get; set; }
 
         public DateTime PublishDateTime { get; set; }

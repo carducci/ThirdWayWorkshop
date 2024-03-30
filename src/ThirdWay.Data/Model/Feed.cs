@@ -21,6 +21,9 @@ namespace ThirdWay.Data.Model
         [StringLength(1024)]
         public string Url { get; set; } = null!;
 
+        [StringLength(1024)]
+        public string ImageUrl { get; set; } = null!;
+
         [Required]
         [StringLength(64)]
         public string Title { get; set; } = string.Empty;
