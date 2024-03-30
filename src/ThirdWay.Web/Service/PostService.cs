@@ -17,16 +17,9 @@ namespace ThirdWay.Web.Service
         void Dispose();
     }
 
-    public class PostService : IDisposable, IPostService
+    public class PostService(ReaderContext context) : IDisposable, IPostService
     {
-        private readonly ILogger<PostService> _logger;
-        private readonly ReaderContext _context;
-
-        public PostService(ILogger<PostService> logger, ReaderContext context)
-        {
-            _logger = logger;
-            _context = context;
-        }
+        private readonly ReaderContext _context = context;
 
         public Post GetPost(int id)
         {
@@ -38,20 +31,14 @@ namespace ThirdWay.Web.Service
             return _context.Posts.FirstOrDefault(p => p.UriHash == hash)!;
         }
 
-        public List<Post> GetAll(int take = 5, int offset=0)
-        {
-            return _context.Posts.OrderByDescending(p => p.PublishDateTime).Skip(offset).Take(take).ToList();
-        }
+        public List<Post> GetAll(int take = 5, int offset = 0) 
+            => _context.Posts.OrderByDescending(p => p.PublishDateTime).Skip(offset).Take(take).ToList();
 
-        public List<Post> GetUnread(int take = 5, int offset = 0)
-        {
-            return _context.Posts.Where(p=>!p.IsRead).OrderByDescending(p => p.PublishDateTime).Skip(offset).Take(take).ToList();
-        }
+        public List<Post> GetUnread(int take = 5, int offset = 0) 
+            => _context.Posts.Where(p => !p.IsRead).OrderByDescending(p => p.PublishDateTime).Skip(offset).Take(take).ToList();
 
-        public List<Post> GetFavorite(int take = 5, int offset = 0)
-        {
-            return _context.Posts.Where(p => p.IsFavorite).OrderByDescending(p => p.PublishDateTime).Skip(offset).Take(take).ToList();
-        }
+        public List<Post> GetFavorite(int take = 5, int offset = 0) 
+            => _context.Posts.Where(p => p.IsFavorite).OrderByDescending(p => p.PublishDateTime).Skip(offset).Take(take).ToList();
 
         public void MarkRead(int id)
         {
@@ -84,6 +71,7 @@ namespace ThirdWay.Web.Service
         public void Dispose()
         {
             _context.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

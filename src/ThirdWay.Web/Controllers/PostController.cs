@@ -3,16 +3,9 @@ using ThirdWay.Web.Service;
 
 namespace ThirdWay.Web.Controllers
 {
-    public class PostController : Controller
+    public class PostController(IPostService postService) : Controller
     {
-        private readonly ILogger<PostController> _logger;
-        private readonly IPostService _postService;
-
-        public PostController(ILogger<PostController> logger, IPostService postService)
-        {
-            _logger = logger;
-            _postService = postService;
-        }
+        private readonly IPostService _postService = postService;
 
         [HttpGet("/Post")]
         public IActionResult All(int page = 1)

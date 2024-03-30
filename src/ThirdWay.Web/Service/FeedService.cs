@@ -11,26 +11,16 @@ namespace ThirdWay.Web.Service
         void Dispose();
     }
 
-    public class FeedService : IDisposable, IFeedService
+    public class FeedService(ReaderContext context) : IDisposable, IFeedService
     {
-        private readonly ILogger<FeedService> _logger;
-        private readonly ReaderContext _context;
-
-        public FeedService(ILogger<FeedService> logger, ReaderContext context)
-        {
-            _logger = logger;
-            _context = context;
-        }
+        private readonly ReaderContext _context = context;
 
         public Data.Model.Feed GetFeed(int id)
         {
             return _context.Feeds.FirstOrDefault(p => p.Id == id)!;
         }
 
-        public List<Data.Model.Feed> GetAll(int take = 5, int offset = 0)
-        {
-            return _context.Feeds.OrderByDescending(p => p.Id).Skip(offset).Take(take).ToList();
-        }
+        public List<Data.Model.Feed> GetAll(int take = 5, int offset = 0) => _context.Feeds.OrderByDescending(p => p.Id).Skip(offset).Take(take).ToList();
 
         public async Task UpsertFeedAsync(string feedUrl)
         {
@@ -40,7 +30,7 @@ namespace ThirdWay.Web.Service
 
             if (_context.Feeds.Any(f => f.Url == feedUrl))
             {
-                var oldFeed = _context.Feeds.FirstOrDefault(f => f.Url == feedUrl);
+                var oldFeed = _context.Feeds.First(f => f.Url == feedUrl);
                 oldFeed.LastUpdated = feed.LastUpdated;
                 oldFeed.Description = feed.Description ?? "";
                 oldFeed.ImageUrl = feed.ImageUrl;
@@ -69,6 +59,8 @@ namespace ThirdWay.Web.Service
 
         public void Dispose()
         {
+            _context.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -12,8 +12,7 @@ namespace ThirdWay.Feed
     {
         public static string GetHashFromString(string str)
         {
-            using var algorithm = SHA256.Create();
-            var bytes = algorithm.ComputeHash(Encoding.UTF8.GetBytes(str));
+            var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(str));
             var sb = new StringBuilder();
 
             foreach (var b in bytes)
