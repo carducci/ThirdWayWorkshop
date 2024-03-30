@@ -17,28 +17,54 @@ namespace ThirdWay.Web.Controllers
         [HttpGet("/Post")]
         public IActionResult All(int page = 1)
         {
-            var posts = _postService.GetAll();
-            ViewData["title"] = "All Posts";
+            var posts = _postService.GetAll(6, (page-1)*5);
+            
+            ViewData["title"] = $"All Posts {(page>1 ? "- Page " + page : "")}";
+            ViewData["current-page"] = page;
+            ViewData["next-page"] = page;
+            ViewData["more-link"] = $"/Post?page={page + 1}";
 
-            return View("list",posts);
+            if (posts.Count == 6)
+            {
+                ViewData["next-page"] = page + 1;
+            }
+            
+            return View("list",posts.OrderByDescending( p => p.PublishDateTime).Take(5).ToList());
         }
 
         [HttpGet("/Post/Status/Unread")]
         public IActionResult Unread(int page = 1)
         {
-            var posts = _postService.GetUnread();
-            ViewData["title"] = "Unread Posts";
+            var posts = _postService.GetUnread(6, (page - 1) * 5);
+            ViewData["title"] = $"Unread Posts  {(page>1 ? "- Page " + page : "")}";
+            ViewData["current-page"] = page;
+            ViewData["next-page"] = page;
+            ViewData["more-link"] = $"/Post/Status/Unread?page={page + 1}";
 
-            return View("list", posts);
+            if (posts.Count == 6)
+            {
+                ViewData["next-page"] = page + 1;
+            }
+
+            return View("list", posts.OrderByDescending(p => p.PublishDateTime).Take(5).ToList());
+
         }
 
         [HttpGet("/Post/Status/Favorite")]
         public IActionResult Favorite(int page = 1)
         {
-            ViewData["title"] = "Favorite Posts";
-            var posts = _postService.GetFavorite();
+            var posts = _postService.GetFavorite(6, (page - 1) * 5);
+            ViewData["title"] = $"Favorite Posts  {(page > 1 ? "- Page " + page : "")}";
+            ViewData["current-page"] = page;
+            ViewData["next-page"] = page;
+            ViewData["more-link"] = $"/Post/Status/Favorite?page={page + 1}";
 
-            return View("list", posts);
+            if (posts.Count == 6)
+            {
+                ViewData["next-page"] = page + 1;
+            }
+
+            return View("list", posts.OrderByDescending(p => p.PublishDateTime).Take(5).ToList());
         }
 
         [HttpGet("/Post/Id/{id}")]

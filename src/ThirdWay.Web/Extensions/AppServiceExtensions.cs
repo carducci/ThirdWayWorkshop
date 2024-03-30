@@ -11,7 +11,7 @@ namespace ThirdWay.Web.Extensions
             services.AddControllersWithViews();
             services.AddEntityFrameworkSqlite().AddDbContext<ReaderContext>();
             services.AddScoped<IPostService, PostService>();
-            
+            services.AddScoped<IFeedService, FeedService>();
             return services;
         }
     }

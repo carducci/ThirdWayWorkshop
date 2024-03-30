@@ -13,12 +13,12 @@ namespace ThirdWay.Web.Service
 
     public class FeedService : IDisposable, IFeedService
     {
-        private readonly ILogger<PostService> _logger;
+        private readonly ILogger<FeedService> _logger;
         private readonly ReaderContext _context;
 
-        public FeedService(/*ILogger<FeedService> logger, */ReaderContext context)
+        public FeedService(ILogger<FeedService> logger, ReaderContext context)
         {
-            //_logger = logger;
+            _logger = logger;
             _context = context;
         }
 

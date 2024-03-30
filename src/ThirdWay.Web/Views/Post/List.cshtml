@@ -1,12 +1,9 @@
 ﻿@model List<ThirdWay.Data.Model.Post>
-@{
-    ViewData["Title"] = "All Posts";
-}
 
-<div class="full-container top-margin-20 margin-20">
+<div class="full-container top-margin-20">
 @foreach (var post in Model)
 {
-    <div class="row">
+        <div class="row" id="Post-@post.Id">
         <div class="col-12">
             <img src="@post.ImageUrl" width="100%" alt="" style="height: 300px; object-fit: cover;">
         </div>
@@ -26,6 +23,16 @@
             </div>
         </div>
         <hr class="white-txt top-margin-20 bottom-margin-20">
+    </div>
+}
+
+    @if (ViewData["current-page"].ToString() != ViewData["next-page"].ToString())
+{
+    <div class="row">
+        <div class="col-12">
+            <a href="@ViewData["more-link"]" class="white-txt">more</a>
+            <hr class="white-txt top-margin-20 bottom-margin-20">
+        </div>
     </div>
 }
 </div>
