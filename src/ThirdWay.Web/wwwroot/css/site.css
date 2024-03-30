@@ -1,28 +1,206 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+* {
+    font-family: Verdana, sans-serif;
 }
 
 body {
-  margin-bottom: 60px;
+    margin: 0 !important;
+    /* background-color: #121212 !important; */
+    background-color: #282828 !important;
 }
 
-.card-img-top {
+.white-txt {
+    color: white;
+}
+
+.gold-txt {
+    color: #fcdc87;
+}
+
+.secondary-txt {
+    color: #282828;
+}
+
+.white-bg {
+    background-color: white;
+}
+
+.gold-bg {
+    background-color: #fcdc87;
+}
+
+.secondary-bg {
+    background-color: #282828;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 50px;
+    border-bottom: 1px solid #3f3f3f;
+    background-color: #121212;
+}
+
+    header .display-right, header .display-left {
+        display: flex;
+        align-items: center;
+    }
+
+    header .display-left {
+        margin-left: 2rem;
+    }
+
+    header i {
+        margin-right: 1rem;
+        font-size: 18px;
+        cursor: pointer;
+    }
+
+.input-fc {
+    border-radius: 20px;
+    border: 0;
+    padding: 5px 15px;
+}
+
+main {
+    display: flex;
+    flex-grow: 1;
+}
+
+.display-right {
+    display: flex;
+    justify-content: end;
+}
+
+    .display-right i {
+        font-size: 20px; /* set size for the hamburger menu icon */
+        cursor: pointer; /* change cursor to pointer when we hover over icon */
+    }
+
+/* style links in the nav */
+.navLink {
+    text-decoration: none;
+    font-size: 20px;
+    color: white;
+    font-size: 17px;
+    margin: 10px 5px 0 20px;
+}
+
+    .navLink:hover {
+        color: #fcdc87;
+        font-size: 18px;
+    }
+
+    .navLink.active {
+        color: #fcdc87;
+        font-size: 18px;
+    }
+
+main .full-container {
     width: 100%;
-    height: 35vw;
-    object-fit: cover;
+}
+
+.article-options {
+    display: flex;
+    justify-content: space-between;
+}
+
+.margin-20 {
+    margin: 20px;
+}
+
+.top-margin-20 {
+    margin-top: 20px !important;
+}
+
+.bottom-margin-20 {
+    margin-bottom: 20px !important;
+}
+
+.rss-btn {
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 500;
+    border: 2px solid transparent;
+}
+
+
+    .rss-btn:hover {
+        border: 2px solid #fcdc87;
+        background-color: #282828;
+        color: white;
+        transition: background-color .5s;
+    }
+
+#sidebar {
+    width: 200px;
+    background: #121212;
+    border-right: 1px solid rgba(255, 255, 255, .1);
+    border-top: 1px solid #121212;
+    margin-top: -1px;
+    box-shadow: 10px 1px 20px -10px rgba(255, 255, 255, 0.2) !important;
+    padding-top: 10px;
+    position: sticky;
+    top: 0;
+}
+
+.flex-display-right {
+    display: flex;
+    justify-content: end;
+}
+
+.read-more a {
+    text-decoration: none;
+    color: #282828;
+}
+
+.centered {
+    text-align: center;
+}
+
+.articleImg {
+    width: 80%;
+    height: 450px;
+}
+
+.articleContainer {
+    padding: 40px 0px;
+    display: flex;
+    justify-content: center;
+}
+
+.titleSeparator {
+    border-color: #fcdc87;
+    width: 10%;
+    border-width: 3px;
+    margin: 0px auto 10px auto;
+}
+
+.rightContent {
+    display: flex;
+    justify-content: end;
+}
+
+.width-80 {
+    width: 90% !important;
+}
+
+.shareIcons i {
+    font-size: 25px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.articleSeperator {
+    border-color: white;
+    width: 89%;
+    margin-left: auto;
+}
+
+.postDate {
+    display: flex;
+    justify-content: space-between;
+    width: 89%;
+    margin-left: auto;
 }
