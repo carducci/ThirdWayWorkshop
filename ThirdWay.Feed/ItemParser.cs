@@ -38,7 +38,6 @@ namespace ThirdWay.Feed
         {
             var body = ConvertRelativeToAbsolute(_feed.Link, item.Content);
             body = ConvertAbsoluteToInternal(_feed.Link, body);
-            body = RemoveHeroImage(body);
             return body;
         }
 
@@ -60,6 +59,7 @@ namespace ThirdWay.Feed
                 var value = node.GetAttributeValue(attribute, string.Empty);
 
                 // Create a Uri instance for the attribute value
+                if (IsAbsoluteUrl(value)) continue;
                 if (!Uri.TryCreate(baseUri, value, out var absoluteUri)) continue;
                 node.SetAttributeValue(attribute,
                     node.Name.Equals("a", StringComparison.OrdinalIgnoreCase)
@@ -84,6 +84,7 @@ namespace ThirdWay.Feed
                 {
 
                     var href = node.GetAttributeValue("href", string.Empty);
+
                     if (Uri.TryCreate(href, UriKind.Absolute, out var absoluteUri))
                     {
                         // Check if the absolute URL belongs to the base URL domain
@@ -100,19 +101,28 @@ namespace ThirdWay.Feed
             return htmlDocument.DocumentNode.OuterHtml;
         }
 
-        private string RemoveHeroImage(string htmlFragment)
+        private bool IsAbsoluteUrl(string url)
         {
-            var htmlDocument = new HtmlDocument();
-            htmlDocument.LoadHtml(htmlFragment);
-
-            // Select the first <img> element
-            var imgNode = htmlDocument.DocumentNode.SelectSingleNode("//img");
-            if (imgNode != null)
+            if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out Uri resultUri))
             {
-                imgNode.Remove();
+                // IsAbsoluteUri returns true if the Uri is absolute
+                return resultUri.IsAbsoluteUri;
             }
 
-            return htmlDocument.DocumentNode.OuterHtml;
+            // If the Uri could not be created, it's not a valid relative or absolute Uri
+            return false;
+        }
+
+        public bool IsRelativeUrl(string url)
+        {
+            if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out Uri resultUri))
+            {
+                // IsAbsoluteUri returns false if the Uri is relative
+                return !resultUri.IsAbsoluteUri;
+            }
+
+            // If the Uri could not be created, it's not a valid relative or absolute Uri
+            return false;
         }
     }
 }

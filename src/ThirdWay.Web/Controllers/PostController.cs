@@ -53,5 +53,17 @@ namespace ThirdWay.Web.Controllers
             
             return View(post);
         }
+
+        [HttpGet("/Post/Hash/{hash}")]
+        public IActionResult Post(string hash)
+        {
+            var post = _postService.GetPost(hash);
+            if (post == null)
+                return NotFound();
+
+            ViewData["title"] = post.Title;
+
+            return View(post);
+        }
     }
 }

@@ -6,6 +6,7 @@ namespace ThirdWay.Web.Service
     public interface IPostService
     {
         Post GetPost(int id);
+        Post GetPost(string hash);
         List<Post> GetAll(int take = 5, int offset=0);
         List<Post> GetUnread(int take = 5, int offset = 0);
         List<Post> GetFavorite(int take = 5, int offset = 0);
@@ -30,6 +31,11 @@ namespace ThirdWay.Web.Service
         public Post GetPost(int id)
         {
             return _context.Posts.FirstOrDefault(p => p.Id == id)!;
+        }
+
+        public Post GetPost(string hash)
+        {
+            return _context.Posts.FirstOrDefault(p => p.UriHash == hash)!;
         }
 
         public List<Post> GetAll(int take = 5, int offset=0)

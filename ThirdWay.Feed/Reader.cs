@@ -28,7 +28,7 @@ namespace ThirdWay.Feed
             twFeed.Description = _feed.Description ?? "";
             twFeed.Uri = _feedUrl;
             twFeed.Url = _feed.Link;
-            twFeed.ImageUrl = _feed.ImageUrl;
+            twFeed.ImageUrl = _feed.ImageUrl ?? "";
             twFeed.Title = _feed.Title;
             twFeed.Author = "";
             if (_feed.Type == FeedType.Atom)

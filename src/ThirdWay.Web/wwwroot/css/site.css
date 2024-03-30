@@ -177,6 +177,7 @@ main .full-container {
     box-shadow: 10px 1px 20px -10px rgba(255, 255, 255, 0.2) !important;
     position: sticky;
     top: 0;
+    margin-bottom: 50px !important;
 }
 
 .flex-display-right {
@@ -594,7 +595,7 @@ main .full-container {
 }
 .post-content img {
   display: block;
-  max-width: 100%;
+  max-width: 800px;
   height: auto;
 }
 .post-content ul {

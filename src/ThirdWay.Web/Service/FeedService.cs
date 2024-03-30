@@ -46,12 +46,14 @@ namespace ThirdWay.Web.Service
                 oldFeed.ImageUrl = feed.ImageUrl;
                 oldFeed.Title = feed.Title;
                 feed.Id = oldFeed.Id;
+                await _context.SaveChangesAsync();
             }
             else
             {
                 _context.Feeds.Add(feed);
+                await _context.SaveChangesAsync();
             }
-            await _context.SaveChangesAsync();
+            
 
             foreach (var post in posts)
             {
