@@ -3,18 +3,29 @@
     ViewData["Title"] = "All Posts";
 }
 
+<div class="full-container top-margin-20 margin-20">
 @foreach (var post in Model)
 {
-    <div class="card mb-3">
-        <img src="@post.ImageUrl" class="card-img-top" alt=""/>
-        <div class="card-body">
-            <h5 class="card-title"><a href="/Post/Id/@post.Id">@post.Title</a></h5>
-            <p class="card-text">
-                @post.Description
-            </p>
+    <div class="row">
+        <div class="col-12">
+            <img src="@post.ImageUrl" width="100%" alt="" style="height: 300px; object-fit: cover;">
         </div>
-        <div class="card-footer">
-            <small class="text-body-secondary">Last updated @post.LastUpdated</small>
+        <div class="col-12">
+            <p class="gold-txt">@post.LastUpdated.ToShortDateString()</p>
+            <h1 class="article-title white-txt">@post.Title</h1>
+            <p class="article-desc white-txt">@post.Description</p>
+            <div class="article-options">
+                <div class="read-more">
+                    <a href="/Post/Id/@post.Id" class="rss-btn gold-bg">Read More</a>
+                </div>
+                <div class="shareIcons">
+                    <i class="fa-solid fa-share-nodes gold-txt"></i>
+                    <i class="fa-regular fa-eye gold-txt"></i>
+                    <i class="fa-regular fa-star gold-txt"></i>
+                </div>
+            </div>
         </div>
+        <hr class="white-txt top-margin-20 bottom-margin-20">
     </div>
 }
+</div>

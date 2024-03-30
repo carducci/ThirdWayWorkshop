@@ -8,6 +8,13 @@ body {
     background-color: #282828 !important;
 }
 
+.fixed-top {
+    position: fixed; /* Fix the position of the header */
+    top: 0; /* Align the header to the top of the viewport */
+    width: 100%; /* Make the header take the full width of the viewport */
+    z-index: 1030; /* Ensure the header is above other content; adjust as necessary */
+}
+
 .white-txt {
     color: white;
 }
@@ -138,7 +145,7 @@ main .full-container {
     background: #121212;
     border-right: 1px solid rgba(255, 255, 255, .1);
     border-top: 1px solid #121212;
-    margin-top: -1px;
+    margin-top: 40px;
     box-shadow: 10px 1px 20px -10px rgba(255, 255, 255, 0.2) !important;
     padding-top: 10px;
     position: sticky;
