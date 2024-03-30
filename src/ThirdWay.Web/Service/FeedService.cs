@@ -1,11 +1,12 @@
-﻿using ThirdWay.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using ThirdWay.Data;
 
 namespace ThirdWay.Web.Service
 {
     public interface IFeedService
     {
-        Data.Model.Feed GetFeed(int id);
-        List<Data.Model.Feed> GetAll(int take = 5, int offset = 0);
+        Task<Data.Model.Feed> GetFeedAsync(int id);
+        Task<List<Data.Model.Feed>> GetAllAsync(int take = 5, int offset = 0);
         Task UpsertFeedAsync(string feedUrl);
         void Dispose();
     }
@@ -14,12 +15,12 @@ namespace ThirdWay.Web.Service
     {
         private readonly ReaderContext _context = context;
 
-        public Data.Model.Feed GetFeed(int id)
+        public async Task<Data.Model.Feed> GetFeedAsync(int id)
         {
-            return _context.Feeds.FirstOrDefault(p => p.Id == id)!;
+            return await _context.Feeds.FirstOrDefaultAsync(p => p.Id == id)!;
         }
 
-        public List<Data.Model.Feed> GetAll(int take = 5, int offset = 0) => _context.Feeds.OrderByDescending(p => p.Id).Skip(offset).Take(take).ToList();
+        public async Task<List<Data.Model.Feed>> GetAllAsync(int take = 5, int offset = 0) => await _context.Feeds.OrderByDescending(p => p.Id).Skip(offset).Take(take).ToListAsync();
 
         public async Task UpsertFeedAsync(string feedUrl)
         {

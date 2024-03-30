@@ -10,7 +10,7 @@ namespace ThirdWay.Web.Controllers
         [HttpGet("/Feed")]
         public IActionResult Index()
         {
-            var feeds = _feedService.GetAll();
+            var feeds = await _feedService.GetAllAsync();
             ViewData["title"] = "Feeds";
             return View(feeds);
         }

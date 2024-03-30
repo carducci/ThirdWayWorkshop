@@ -1,19 +1,19 @@
-﻿using ThirdWay.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using ThirdWay.Data;
 using ThirdWay.Data.Model;
 
 namespace ThirdWay.Web.Service
 {
     public interface IPostService
     {
-        Post GetPost(int id);
-        Post GetPost(string hash);
-        List<Post> GetAll(int take = 5, int offset=0);
-        List<Post> GetUnread(int take = 5, int offset = 0);
-        List<Post> GetFavorite(int take = 5, int offset = 0);
-        void MarkRead(int id);
-        void MarkUnread(int id);
-        void MarkFavorite(int id);
-        void MarkUnFavorite(int id);
+        Task<Post> GetPostAsync(int id);
+        Task<Post> GetPostAsync(string hash);
+        Task<List<Post>> GetAllAsync(int take = 5, int offset=0);
+        Task<List<Post>> GetUnreadAsync(int take = 5, int offset = 0);
+        Task<List<Post>> GetFavoriteAsync(int take = 5, int offset = 0);
+        Task MarkReadAsync(int id);
+        Task MarkUnreadAsync(int id);
+        Task ToggleFavoriteAsync(int id);
         void Dispose();
     }
 
@@ -21,51 +21,44 @@ namespace ThirdWay.Web.Service
     {
         private readonly ReaderContext _context = context;
 
-        public Post GetPost(int id)
+        public async Task<Post> GetPostAsync(int id)
         {
-            return _context.Posts.FirstOrDefault(p => p.Id == id)!;
+            return await _context.Posts.FirstOrDefaultAsync(p => p.Id == id)!;
         }
 
-        public Post GetPost(string hash)
+        public async Task<Post> GetPostAsync(string hash)
         {
-            return _context.Posts.FirstOrDefault(p => p.UriHash == hash)!;
+            return await _context.Posts.FirstOrDefaultAsync(p => p.UriHash == hash)!;
         }
 
-        public List<Post> GetAll(int take = 5, int offset = 0) 
-            => _context.Posts.OrderByDescending(p => p.PublishDateTime).Skip(offset).Take(take).ToList();
+        public async Task<List<Post>> GetAllAsync(int take = 5, int offset = 0) 
+            => await _context.Posts.OrderByDescending(p => p.PublishDateTime).Skip(offset).Take(take).ToListAsync();
 
-        public List<Post> GetUnread(int take = 5, int offset = 0) 
-            => _context.Posts.Where(p => !p.IsRead).OrderByDescending(p => p.PublishDateTime).Skip(offset).Take(take).ToList();
+        public async Task<List<Post>> GetUnreadAsync(int take = 5, int offset = 0) 
+            => await _context.Posts.Where(p => !p.IsRead).OrderByDescending(p => p.PublishDateTime).Skip(offset).Take(take).ToListAsync();
 
-        public List<Post> GetFavorite(int take = 5, int offset = 0) 
-            => _context.Posts.Where(p => p.IsFavorite).OrderByDescending(p => p.PublishDateTime).Skip(offset).Take(take).ToList();
+        public async Task<List<Post>> GetFavoriteAsync(int take = 5, int offset = 0) 
+            => await _context.Posts.Where(p => p.IsFavorite).OrderByDescending(p => p.PublishDateTime).Skip(offset).Take(take).ToListAsync();
 
-        public void MarkRead(int id)
+        public async Task MarkReadAsync(int id)
         {
-            var post = GetPost(id);
+            var post = await GetPostAsync(id);
             post.IsRead = true;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void MarkUnread(int id)
+        public async Task MarkUnreadAsync(int id)
         {
-            var post = GetPost(id);
+            var post = await GetPostAsync(id);
             post.IsRead = false;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void MarkFavorite(int id)
+        public async Task ToggleFavoriteAsync(int id)
         {
-            var post = GetPost(id);
-            post.IsFavorite = true;
-            _context.SaveChanges();
-        }
-
-        public void MarkUnFavorite(int id)
-        {
-            var post = GetPost(id);
-            post.IsFavorite = false;
-            _context.SaveChanges();
+            var post = await GetPostAsync(id);
+            post.IsFavorite = !post.IsFavorite;
+            await _context.SaveChangesAsync();
         }
 
         public void Dispose()
