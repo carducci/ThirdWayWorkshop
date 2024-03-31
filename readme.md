@@ -24,9 +24,22 @@ The latest generation of client-side frameworks have become the defacto best pra
 
 HTMX presents an alternative approach to building modern and dynamic web applications. Hypermedia As The Engine Of Application State (HATEOAS) is a powerful and flexible paradigm that has powered over three-decades of web evolution. The key shortcoming of HTML as a hypermedia is the inflexibility of granularity of interactions. Rather than build a custom API to code against that will inevitably change over time, HTMX seeks to extend HTML as a hypermedia. Developers of HTMX-powered web applications simply write standards-compliant HTML and CSS. Unlike first-gen ajax libraries and modern frameworks; rarely--if ever--will a developer write javascript code to interact with HTMX directly. Instead, HTMX acts as a HTML polyfil to enhance the native capabilities of HTML. Using HTMX simply requires adding additional properties to HTML tags to declaritivly improve behavior. This approach supports both progressive enhancement and graceful degration. The use of declarative tag properties rather than imperative coding also introduces a powerful abstraction allowing HTMX to continue to evolve in meaningful ways without breaking existing implementations in the same way that HTML itself has evolved from 1.0 - 5, never requiring [old pages](https://info.cern.ch/) to be rewritten as new capabilities are introduced.
 
+To borrow a summary from the [official HTMX docs](https://htmx.org/docs/):
+
+HTMX extends and generalizes the core idea of HTML as a hypertext, opening up many more possibilities directly within the language:
+
+- Now any element, not just anchors and forms, can issue an HTTP request
+- Now any event, not just clicks or form submissions, can trigger requests
+- Now any HTTP verb, not just GET and POST, can be used
+- Now any element, not just the entire window, can be the target for update by the request
+
+Note that when you are using htmx, on the server side you typically respond with HTML, not JSON. This keeps you firmly within the [original web programming model](https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm), using [Hypertext As The Engine Of Application State](https://en.wikipedia.org/wiki/HATEOAS) without even needing to really understand that concept.
+
+It’s worth mentioning that, if you prefer, you can use the data- prefix when using htmx: `<a data-hx-post="/click">Click Me!</a>` (which  will keep your HTML completely valid, only using properties defined in the spec. This is optional, for the purposes of this workshop, we won't be following this convention).
+
 This project provides a playground and an example of how a Web 1.0 application can be modernized to provide the modern, dynamic user experience we have come to expect without adding excessive code that must be organized, maintained, and managed. Applications written using HTMX don't suffer from the complexity, tech debt, and ephemerality of framework-based web apps. This is not to say HTMX applications are superior, simply that a meaningful alternative to framework-centric web apps exists. Web 1.0, framework-centric, and HTMX apps all have their benefits and trade-offs.
 
-#### When to Use HTML
+#### When to Use HTMX
 
 In short, wherever it makes sense. Some examples might me:
 
@@ -44,7 +57,7 @@ Our Web 1.0 Application is a very simplistic RSS reader capabible of subscribing
 
 To run this application locally you'll need:
 
-- A code editor (such as [Visual Studio Code](https://code.visualstudio.com/Download)
+- A code editor (such as [Visual Studio Code](https://code.visualstudio.com/Download))
 - The [.Net 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 - A container runtime such as [Docker](https://www.docker.com/products/docker-desktop/) or [Rancher](https://rancherdesktop.io/)
 
@@ -118,3 +131,87 @@ Razor will handle sanitizing and encoding unless `@Html.Raw()` is used, in which
 
 ## Lab 2 - Installing HTMX (5 minutes)
 
+HTMX is a single lightweight (~14kb gzipped) and depedency-free library. In most cases it will be installed by adding a `<script>` tag to your html template, however in can be installed using JavaScript package managers (e.g. `npm install htmx.org`). Since a build step is not necessary for this project, we can simply reference the library from a CDN or download it to `/wwwroot/lib`.
+
+1. Open `/Views/Shared/_Layout.cshtml`
+2. Add the following `<script>` tag to the `<head>`
+
+```html
+<script src="https://unpkg.com/htmx.org@1.9.11" integrity="sha384-0gxUXCCR8yv9FM2b+U3FDbsKthCI66oH5IA9fHppQq9DDMHuMauqq1ZHBpJxQ0J0" crossorigin="anonymous"></script>
+```
+
+N.B. When referencing external files such as this, always define `crossorigin="anonymous"` 
+
+That's it! The entire application is now using Fielding's code-on-demand constraint to make HTML a significantly more powerful hypermedia.
+
+Verify HTMX has loaded correctly by running the application and typing `htmx.version` in the console.
+
+## Lab 3 - Introducing hx-boost (10 mins)
+
+One advantage Single-Page Applications have over Web 1.0 applications is their ability to perform page navigation without necessarily throwing away the entire DOM, CSS rules, and javascript files. A full-page change often requires retrieving these resources again (admittedly, often from cache) and parsing/executing them during every navigation event.
+
+HTMX offers a simple mechanism to begin AJAX-ifying an application in the form of "boosted" hypermedia controls. The `hx-boost` attribute, when added to an anchor or form, quickly transforms these into more fine-grained AJAX controls. Instead of replacing the whole page, HTMX will simply replace the contents of the `<body>` tag which improves user-perceived performance since the browser doesn't need to parse and interpret scripts and stylesheets in the `<head>` over and over again.
+
+### 3.1 Boosting Posts
+
+Navigation from the post list, to an individual post involves clicking on a hyperlink. You'll find the specific hyperlink on line 29 of `/Views/Post/List.cshtml`
+
+```html
+...
+	<div class="read-more">
+		<a href="/Post/Id/@post.Id" class="rss-btn gold-bg">Read More</a>
+	</div>
+...
+```
+
+We're going to transform this into a "boosted" link by adding this property to the anchor tag: `hx-boost="true"`.
+
+```html
+...
+	<div class="read-more">
+		<a href="/Post/Id/@post.Id" class="rss-btn gold-bg">Read More</a>
+	</div>
+...
+```
+
+becomes:
+
+```html
+...
+	<div class="read-more">
+		<a href="/Post/Id/@post.Id" 
+			class="rss-btn gold-bg"
+			hx-boost="true">Read More</a>
+	</div>
+...
+```
+
+Rebuild the application and verify this is now an AJAX operation by opening a post while the network inspector is open in the browser developer tools. It should now be an XHR request.
+
+### 3.2 More Boosting and Inheritance
+
+In many cases, this is behavior we might wish to deploy across our application. While this could be accomplished by adding the `hx-boost="true"` property to every hyperlink and form, HTMX also supports attribute inheritance, what the authors refert to as "cascading HTMX attributes" inspired by "cascading style sheets."
+
+Let's apply boosting globally by adding this property to the `<body>` tag in `Views/Shared/_layout.cshtml` on line 12.
+
+```html
+<body>
+```
+
+becomes
+
+```html
+<body hx-boost="true">
+```
+
+Save and run the application to verify that all local interactions are boosted. You'll likely note as you navigate around that, despite navigation within the app being entirely ajax, HTMX is maintaining the correct location within the browser. Back and Forward buttons will work as expected, as will bookmarks. HTMX provides sensible defauts for when the location bar should be updated, but you can override these defaults if/when it makes sense. We'll explore this in upcoming labs.
+
+Notably HTMX won't boost external links, and cases where you might want to override this behavior on a specific link can be accomplished by applying the `hx-boost="false"` attribute. E.g. 
+
+```html 
+...
+    <a href="/files/report.pdf" hx-boost="false">Download PDF</a>
+...
+```
+
+Save and verify that all internal forms and links are now boosted.
