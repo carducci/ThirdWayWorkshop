@@ -57,6 +57,7 @@ namespace ThirdWay.Web.Controllers
         }
 
         [HttpPost("/Feed/Id/{id}/DeleteFeed")]
+        [Obsolete("This endpoint exists for compatibility/graceful degration only. A proper DELETE request on the resources is preferred")]
         public async Task<IActionResult> Delete(int id)
         {
             await _feedService.DeleteFeed(id);
@@ -65,5 +66,20 @@ namespace ThirdWay.Web.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpDelete("/Feed/Id/{id}")]
+        public async Task<IActionResult> DeleteFeed(int id)
+        {
+            try
+            {
+                await _feedService.DeleteFeed(id);
+                await Bottleneck();
+            }
+            catch(Exception){
+                //Something went wrong here. Most likely a 404
+                //A delete is supposed to be idempotent so we will ignore this
+            }
+            // Return a 204 No Content response
+            return NoContent();
+        }
     }
 }
