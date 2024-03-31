@@ -4,7 +4,7 @@ using ThirdWay.Web.Service;
 
 namespace ThirdWay.Web.Controllers
 {
-    public class PostController(IPostService postService) : Controller
+    public class PostController(IPostService postService) : BaseController
     {
         private readonly IPostService _postService = postService;
 
@@ -23,7 +23,8 @@ namespace ThirdWay.Web.Controllers
             {
                 ViewData["next-page"] = page + 1;
             }
-            
+
+            await Bottleneck();
             return View("list",posts.OrderByDescending( p => p.PublishDateTime).Take(5).ToList());
         }
 
@@ -43,6 +44,7 @@ namespace ThirdWay.Web.Controllers
                 ViewData["next-page"] = page + 1;
             }
 
+            await Bottleneck();
             return View("list", posts.OrderByDescending(p => p.PublishDateTime).Take(5).ToList());
 
         }
@@ -63,6 +65,7 @@ namespace ThirdWay.Web.Controllers
                 ViewData["next-page"] = page + 1;
             }
 
+            await Bottleneck();
             return View("list", posts.OrderByDescending(p => p.PublishDateTime).Take(5).ToList());
         }
 
@@ -77,10 +80,11 @@ namespace ThirdWay.Web.Controllers
             {
                 await _postService.MarkReadAsync(post.Id);
             }
-
+            
             ViewData["title"] = post.Title;
             ViewData["CurrentUrl"] = $"/Post/Id/{id}";
-
+            
+            await Bottleneck();
             return View(post);
         }
 
@@ -100,6 +104,7 @@ namespace ThirdWay.Web.Controllers
             ViewData["title"] = post.Title;
             ViewData["CurrentUrl"] = $"/Post/Hash/{hash}";
 
+            await Bottleneck();
             return View(post);
         }
 
@@ -107,6 +112,8 @@ namespace ThirdWay.Web.Controllers
         public async Task<IActionResult> ToggleFavorite(int id, string redirectUrl)
         {
             await _postService.ToggleFavoriteAsync(id);
+
+            await Bottleneck();
             return LocalRedirect(redirectUrl);
         }
 
@@ -114,6 +121,8 @@ namespace ThirdWay.Web.Controllers
         public async Task<IActionResult> MarkRead(int id, string redirectUrl)
         {
             await _postService.MarkReadAsync(id);
+            
+            await Bottleneck();
             return LocalRedirect(redirectUrl);
         }
 
@@ -121,6 +130,8 @@ namespace ThirdWay.Web.Controllers
         public async Task<IActionResult> MarkUnread(int id, string redirectUrl)
         {
             await _postService.MarkUnreadAsync(id);
+
+            await Bottleneck();
             return LocalRedirect(redirectUrl);
         }
 

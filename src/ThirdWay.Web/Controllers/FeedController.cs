@@ -4,7 +4,7 @@ using ThirdWay.Web.Service;
 
 namespace ThirdWay.Web.Controllers
 {
-    public class FeedController(IFeedService feedService) : Controller
+    public class FeedController(IFeedService feedService) : BaseController
     {
         private readonly IFeedService _feedService = feedService;
 
@@ -14,6 +14,8 @@ namespace ThirdWay.Web.Controllers
             var feeds = await _feedService.GetAllAsync();
             ViewData["title"] = "Feeds";
             ViewData["CurrentUrl"] = $"/Feed";
+
+            await Bottleneck();
             return View(new FeedViewModel(){Feeds = feeds});
         }
 
@@ -28,6 +30,8 @@ namespace ThirdWay.Web.Controllers
                     await _feedService.UpsertFeedAsync(model.NewUrl!);
                     ViewData["title"] = "Feeds";
                     ViewData["CurrentUrl"] = $"/Feed";
+
+                    await Bottleneck();
                     return RedirectToAction("Index");
                 }
             }
@@ -37,6 +41,8 @@ namespace ThirdWay.Web.Controllers
             }
 
             model.Feeds = await _feedService.GetAllAsync();
+
+            await Bottleneck();
             return View("Index", model);
         }
 
@@ -45,6 +51,8 @@ namespace ThirdWay.Web.Controllers
         public async Task<IActionResult> RefreshAll(string redirectUrl)
         {
             await _feedService.RefreshAllAsync();
+
+            await Bottleneck();
             return LocalRedirect(redirectUrl);
         }
 
@@ -52,6 +60,8 @@ namespace ThirdWay.Web.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             await _feedService.DeleteFeed(id);
+
+            await Bottleneck();
             return RedirectToAction("Index");
         }
 
