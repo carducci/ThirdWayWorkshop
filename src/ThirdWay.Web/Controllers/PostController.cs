@@ -9,9 +9,9 @@ namespace ThirdWay.Web.Controllers
         private readonly IPostService _postService = postService;
 
         [HttpGet("/Post")]
-        public IActionResult All(int page = 1)
+        public async Task<IActionResult> All(int page = 1)
         {
-            var posts = _postService.GetAllAsync(6, (page-1)*5);
+            var posts = await _postService.GetAllAsync(6, (page-1)*5);
             
             ViewData["title"] = $"All Posts {(page>1 ? "- Page " + page : "")}";
             ViewData["CurrentUrl"] = $"/Post{(page > 1 ? "?page=" + page : "")}";
@@ -28,12 +28,12 @@ namespace ThirdWay.Web.Controllers
         }
 
         [HttpGet("/Post/Status/Unread")]
-        public IActionResult Unread(int page = 1)
+        public async Task<IActionResult> Unread(int page = 1)
         {
-            var posts = _postService.GetUnreadAsync(6, (page - 1) * 5);
+            var posts = await _postService.GetUnreadAsync(6, (page - 1) * 5);
 
             ViewData["title"] = $"Unread Posts  {(page>1 ? "- Page " + page : "")}";
-            ViewData["CurrentUrl"] = $"/Post{(page > 1 ? "?page=" + page : "")}";
+            ViewData["CurrentUrl"] = $"/Post/Status/Unread{(page > 1 ? "?page=" + page : "")}";
             ViewData["current-page"] = page;
             ViewData["next-page"] = page;
             ViewData["more-link"] = $"/Post/Status/Unread?page={page + 1}";
@@ -48,12 +48,12 @@ namespace ThirdWay.Web.Controllers
         }
 
         [HttpGet("/Post/Status/Favorite")]
-        public IActionResult Favorite(int page = 1)
+        public async Task<IActionResult> Favorite(int page = 1)
         {
-            var posts = _postService.GetFavoriteAsync(6, (page - 1) * 5);
+            var posts = await _postService.GetFavoriteAsync(6, (page - 1) * 5);
 
             ViewData["title"] = $"Favorite Posts  {(page > 1 ? "- Page " + page : "")}";
-            ViewData["CurrentUrl"] = $"/Post{(page > 1 ? "?page=" + page : "")}";
+            ViewData["CurrentUrl"] = $"/Post/Status/Favorite{(page > 1 ? "?page=" + page : "")}";
             ViewData["current-page"] = page;
             ViewData["next-page"] = page;
             ViewData["more-link"] = $"/Post/Status/Favorite?page={page + 1}";
@@ -67,9 +67,9 @@ namespace ThirdWay.Web.Controllers
         }
 
         [HttpGet("/Post/Id/{id}")]
-        public IActionResult Post(int id)
+        public async Task<IActionResult> Post(int id)
         {
-            var post = _postService.GetPostAsync(id);
+            var post = await _postService.GetPostAsync(id);
             if(post == null)
                 return NotFound();
             ViewData["title"] = post.Title;
@@ -79,9 +79,9 @@ namespace ThirdWay.Web.Controllers
         }
 
         [HttpGet("/Post/Hash/{hash}")]
-        public IActionResult Post(string hash)
+        public async Task<IActionResult> Post(string hash)
         {
-            var post = _postService.GetPostAsync(hash);
+            var post = await _postService.GetPostAsync(hash);
             if (post == null)
                 return NotFound();
 
@@ -92,9 +92,24 @@ namespace ThirdWay.Web.Controllers
         }
 
         [HttpPost("/Post/Id/{id}/ToggleFavorite")]
-        public IActionResult ToggleFavorite(int id)
+        public async Task<IActionResult> ToggleFavorite(int id, string redirectUrl)
         {
-            await _postService.MarkFavoriteAsync(id);
+            await _postService.ToggleFavoriteAsync(id);
+            return LocalRedirect(redirectUrl);
+        }
+
+        [HttpPost("/Post/Id/{id}/MarkRead")]
+        public async Task<IActionResult> MarkRead(int id, string redirectUrl)
+        {
+            await _postService.MarkReadAsync(id);
+            return LocalRedirect(redirectUrl);
+        }
+
+        [HttpPost("/Post/Id/{id}/MarkUnread")]
+        public async Task<IActionResult> MarkUnread(int id, string redirectUrl)
+        {
+            await _postService.MarkUnreadAsync(id);
+            return LocalRedirect(redirectUrl);
         }
     }
 }

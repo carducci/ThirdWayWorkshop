@@ -10,8 +10,21 @@
                     <div class="postDate">
                         <p class="gold-txt">@Model.LastUpdated.ToShortDateString()</p>
                         <div class="shareIcons rightContent">
-                            <i class="fa-solid fa-share-nodes gold-txt"></i>
-                            <i class="fa-regular fa-star gold-txt"></i>
+                            <form method="post" action="/Post/Id/@Model.Id/ToggleFavorite" style="display: inline;">
+                                <input type="hidden" name="redirectUrl" value="@ViewData["CurrentUrl"]" />
+                                @if (Model.IsFavorite)
+                                {
+                                    <button type="submit" class="btn btn-link" aria-label="Un-Favorite Post" title="Un-Favorite Post">
+                                        <i class="fa-solid fa-star gold-txt"></i>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="btn btn-link" aria-label="Favorite Post" title="Favorite Post">
+                                        <i class="fa-regular fa-star gold-txt"></i>
+                                    </button>
+                                }
+                            </form>
                         </div>
                     </div>
                     <hr class="articleSeperator">

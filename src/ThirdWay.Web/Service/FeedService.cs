@@ -6,9 +6,10 @@ namespace ThirdWay.Web.Service
     public interface IFeedService
     {
         Task<Data.Model.Feed> GetFeedAsync(int id);
-        Task<List<Data.Model.Feed>> GetAllAsync(int take = 5, int offset = 0);
+        Task<List<Data.Model.Feed>> GetAllAsync();
         Task UpsertFeedAsync(string feedUrl);
         void Dispose();
+        Task RefreshAllAsync();
     }
 
     public class FeedService(ReaderContext context) : IDisposable, IFeedService
@@ -20,7 +21,7 @@ namespace ThirdWay.Web.Service
             return await _context.Feeds.FirstOrDefaultAsync(p => p.Id == id)!;
         }
 
-        public async Task<List<Data.Model.Feed>> GetAllAsync(int take = 5, int offset = 0) => await _context.Feeds.OrderByDescending(p => p.Id).Skip(offset).Take(take).ToListAsync();
+        public async Task<List<Data.Model.Feed>> GetAllAsync() => await _context.Feeds.OrderByDescending(p => p.Id).ToListAsync();
 
         public async Task UpsertFeedAsync(string feedUrl)
         {
@@ -59,6 +60,14 @@ namespace ThirdWay.Web.Service
         {
             _context.Dispose();
             GC.SuppressFinalize(this);
+        }
+
+        public async Task RefreshAllAsync()
+        {
+            var feeds = await GetAllAsync();
+            var tasks = feeds.Select(feed => UpsertFeedAsync(feed.Url)).ToList();
+
+            await Task.WhenAll(tasks);
         }
     }
 }

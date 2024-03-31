@@ -16,8 +16,12 @@
         </a>
     </div>
     <div class="display-right">
-        <i class="fa-solid fa-arrows-rotate gold-txt"></i>
-        <i class="fa-solid fa-plus gold-txt"></i>
+        <form method="post" action="/Feed/RefreshAll" style="display: inline;">
+            <input type="hidden" name="redirectUrl" value="@ViewData["CurrentUrl"]" />
+            <button type="submit" class="btn btn-link" aria-label="Refresh Data" title="Refresh Data">
+                    <i class="fa-solid fa-arrows-rotate gold-txt"></i>
+            </button>
+        </form>
         <input type="text" placeholder="Search" class="input-fc secondary-bg">
     </div>
 </header>
