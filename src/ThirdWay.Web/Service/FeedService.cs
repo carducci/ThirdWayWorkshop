@@ -10,6 +10,7 @@ namespace ThirdWay.Web.Service
         Task UpsertFeedAsync(string feedUrl);
         void Dispose();
         Task RefreshAllAsync();
+        Task DeleteFeed(int id);
     }
 
     public class FeedService(ReaderContext context) : IDisposable, IFeedService
@@ -68,6 +69,12 @@ namespace ThirdWay.Web.Service
             var tasks = feeds.Select(feed => UpsertFeedAsync(feed.Url)).ToList();
 
             await Task.WhenAll(tasks);
+        }
+
+        public async Task DeleteFeed(int id)
+        {
+            await _context.Posts.Where(p => p.FeedId == id).ExecuteDeleteAsync();
+            await _context.Feeds.Where(f => f.Id == id).ExecuteDeleteAsync();
         }
     }
 }

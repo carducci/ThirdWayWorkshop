@@ -25,22 +25,12 @@ namespace ThirdWay.Web.Service
         {
             var post = await _context.Posts.FirstOrDefaultAsync(p => p.Id == id)!;
 
-            if (post is { IsRead: false })
-            {
-                await ToggleFavoriteAsync(post.Id);
-            }
-
             return post;
         }
 
         public async Task<Post> GetPostAsync(string hash)
         {
             var post = await _context.Posts.FirstOrDefaultAsync(p => p.UriHash == hash)!;
-
-            if (post is { IsRead: false })
-            {
-                await ToggleFavoriteAsync(post.Id);
-            }
 
             return post;
         }

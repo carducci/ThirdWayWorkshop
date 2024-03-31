@@ -1,15 +1,29 @@
-﻿@model List<ThirdWay.Data.Model.Feed>
+﻿@model FeedViewModel
 
 <div class="full-container top-margin-20">
-@*     <div class="row">
+    <h1 class="centered white-txt">@ViewData["Title"]</h1>
+    <hr class="titleSeparator bottom-margin-20">
+    <div class="row">
         <div class="col-12">
-            
             <h1 class="article-title white-txt">Add Feed</h1>
-            
         </div>
-        <hr class="white-txt top-margin-20 bottom-margin-20">
-    </div> *@
-    @foreach (var feed in Model)
+        <form method="post" class="row g-3">
+            <div class="col-auto">
+                @Html.LabelFor(m => m.NewUrl, new {@class="col-form-label"})
+            </div>
+            <div class="col-auto">
+                @Html.TextBoxFor(m => m.NewUrl, new {@class="form-control form-control-lg", type="url"})
+                @Html.ValidationMessageFor(m => m.NewUrl, "", new {@class="text-danger"})
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-light btn-lg" aria-label="Add Feed" title="Add Feed">
+                    <i class="fa-regular fa-plus"></i> Add Feed
+                </button>
+            </div>
+        </form>
+    </div>
+    <hr class="white-txt top-margin-20 bottom-margin-20">
+    @foreach (var feed in Model.Feeds)
     {
         <div class="row" id="Feed-@feed.Id">
             <div class="col-12">
@@ -18,7 +32,11 @@
                 <p class="article-desc white-txt">@feed.Description</p>
                 <div class="article-options">
                     <div class="shareIcons">
-                        <i class="fa-solid fa-trash gold-txt"></i>
+                        <form method="post" action="/Feed/Id/@feed.Id/DeleteFeed" style="display: inline;">
+                            <button type="submit" class="btn btn-link" aria-label="Delete Feed" title="Delete Feed">
+                                <i class="fa-solid fa-trash gold-txt"></i>
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

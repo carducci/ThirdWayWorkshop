@@ -72,6 +72,12 @@ namespace ThirdWay.Web.Controllers
             var post = await _postService.GetPostAsync(id);
             if(post == null)
                 return NotFound();
+
+            if (post is { IsRead: false })
+            {
+                await _postService.MarkReadAsync(post.Id);
+            }
+
             ViewData["title"] = post.Title;
             ViewData["CurrentUrl"] = $"/Post/Id/{id}";
 
@@ -82,8 +88,14 @@ namespace ThirdWay.Web.Controllers
         public async Task<IActionResult> Post(string hash)
         {
             var post = await _postService.GetPostAsync(hash);
+
             if (post == null)
                 return NotFound();
+
+            if (post is { IsRead: false })
+            {
+                await _postService.MarkReadAsync(post.Id);
+            }
 
             ViewData["title"] = post.Title;
             ViewData["CurrentUrl"] = $"/Post/Hash/{hash}";
