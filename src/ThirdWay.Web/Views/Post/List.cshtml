@@ -14,73 +14,82 @@ else
     <div class="full-container top-margin-20">
         <h1 class="centered white-txt">@ViewData["Title"]</h1>
         <hr class="titleSeparator bottom-margin-20">
-        @foreach (var post in Model)
-        {
-            <div class="row" id="Post-@post.Id">
-                <div class="col-12">
-                    <img src="@post.ImageUrl" style="width: 100%; height: 300px; object-fit: cover;">
-                </div>
-                <div class="col-12">
-                    <p class="gold-txt">@post.LastUpdated.ToShortDateString()</p>
-                    <h1 class="article-title white-txt">@post.Title</h1>
-                    <p class="article-desc white-txt">@post.Description</p>
-                    <div class="article-options">
-                        <div class="read-more">
-                            <a href="/Post/Id/@post.Id" 
-                               class="rss-btn gold-bg"
-                               hx-boost="true">Read More</a>
-                        </div>
-                        <div class="shareIcons">
-                            <form method="post" action="/Post/Id/@post.Id/ToggleFavorite" style="display: inline;">
-                                <input type="hidden" name="redirectUrl" value="@ViewData["CurrentUrl"]"/>
-                                @if (post.IsFavorite)
+        <div class="postList">
+            @foreach (var post in Model)
+            {
+                <div class="row" id="Post-@post.Id">
+                    <div class="col-12">
+                        <img src="@post.ImageUrl" style="width: 100%; height: 300px; object-fit: cover;">
+                    </div>
+                    <div class="col-12">
+                        <p class="gold-txt">@post.LastUpdated.ToShortDateString()</p>
+                        <h1 class="article-title white-txt">@post.Title</h1>
+                        <p class="article-desc white-txt">@post.Description</p>
+                        <div class="article-options">
+                            <div class="read-more">
+                                <a href="/Post/Id/@post.Id" 
+                                class="rss-btn gold-bg"
+                                hx-boost="true">Read More</a>
+                            </div>
+                            <div class="shareIcons">
+                                <form method="post" action="/Post/Id/@post.Id/ToggleFavorite" style="display: inline;">
+                                    <input type="hidden" name="redirectUrl" value="@ViewData["CurrentUrl"]"/>
+                                    @if (post.IsFavorite)
+                                    {
+                                        <button type="submit" class="btn btn-link" aria-label="Un-Favorite Post" title="Un-Favorite Post">
+                                            <i class="fa-solid fa-star gold-txt"></i>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="submit" class="btn btn-link" aria-label="Favorite Post" title="Favorite Post">
+                                            <i class="fa-regular fa-star gold-txt"></i>
+                                        </button>
+                                    }
+                                </form>
+                                @if (post.IsRead)
                                 {
-                                    <button type="submit" class="btn btn-link" aria-label="Un-Favorite Post" title="Un-Favorite Post">
-                                        <i class="fa-solid fa-star gold-txt"></i>
-                                    </button>
+                                    <form method="post" action="/Post/Id/@post.Id/MarkUnread" style="display: inline;">
+                                        <input type="hidden" name="redirectUrl" value="@ViewData["CurrentUrl"]"/>
+
+                                        <button type="submit" class="btn btn-link" aria-label="Mark Post Unread" title="Mark Unread">
+                                            <i class="fa-regular fa-eye-slash gold-txt"></i>
+                                        </button>
+                                    </form>
                                 }
                                 else
                                 {
-                                    <button type="submit" class="btn btn-link" aria-label="Favorite Post" title="Favorite Post">
-                                        <i class="fa-regular fa-star gold-txt"></i>
-                                    </button>
+                                    <form method="post" action="/Post/Id/@post.Id/MarkRead" style="display: inline;">
+                                        <input type="hidden" name="redirectUrl" value="@ViewData["CurrentUrl"]"/>
+
+                                        <button type="submit" class="btn btn-link" aria-label="Mark Post Read" title="Mark Read">
+                                            <i class="fa-regular fa-eye gold-txt"></i>
+                                        </button>
+                                    </form>
                                 }
-                            </form>
-                            @if (post.IsRead)
-                            {
-                                <form method="post" action="/Post/Id/@post.Id/MarkUnread" style="display: inline;">
-                                    <input type="hidden" name="redirectUrl" value="@ViewData["CurrentUrl"]"/>
-
-                                    <button type="submit" class="btn btn-link" aria-label="Mark Post Unread" title="Mark Unread">
-                                        <i class="fa-regular fa-eye-slash gold-txt"></i>
-                                    </button>
-                                </form>
-                            }
-                            else
-                            {
-                                <form method="post" action="/Post/Id/@post.Id/MarkRead" style="display: inline;">
-                                    <input type="hidden" name="redirectUrl" value="@ViewData["CurrentUrl"]"/>
-
-                                    <button type="submit" class="btn btn-link" aria-label="Mark Post Read" title="Mark Read">
-                                        <i class="fa-regular fa-eye gold-txt"></i>
-                                    </button>
-                                </form>
-                            }
+                            </div>
                         </div>
                     </div>
-                </div>
-                <hr class="white-txt top-margin-20 bottom-margin-20">
-            </div>
-        }
-
-        @if (ViewData["current-page"]?.ToString() != ViewData["next-page"]?.ToString())
-        {
-            <div class="row">
-                <div class="col-12">
-                    <a href="@ViewData["more-link"]" class="white-txt">more</a>
                     <hr class="white-txt top-margin-20 bottom-margin-20">
                 </div>
-            </div>
-        }
+            }
+
+            @if (ViewData["current-page"]?.ToString() != ViewData["next-page"]?.ToString())
+            {
+                <div class="row">
+                    <div class="col-12">
+                        <a href="@ViewData["more-link"]" 
+                            class="white-txt"
+                            hx-get="@ViewData["more-link"]"
+                            hx-target="closest div.row"
+                            hx-select=".postList"
+                            hx-indicator="#MorePostsLoading"
+                            hx-swap="outerHTML">more</a>
+                        <span id="MorePostsLoading" class="tw-indicator spinner-border gold-txt" role="status" aria-hidden="true"></span>
+                        <hr class="white-txt top-margin-20 bottom-margin-20">
+                    </div>
+                </div>
+            }
+        </div>
     </div>
 }
