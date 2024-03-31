@@ -25,7 +25,7 @@ namespace ThirdWay.Web.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    await _feedService.UpsertFeedAsync(model.NewUrl);
+                    await _feedService.UpsertFeedAsync(model.NewUrl!);
                     ViewData["title"] = "Feeds";
                     ViewData["CurrentUrl"] = $"/Feed";
                     return RedirectToAction("Index");

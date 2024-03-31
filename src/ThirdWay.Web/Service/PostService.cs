@@ -6,8 +6,8 @@ namespace ThirdWay.Web.Service
 {
     public interface IPostService
     {
-        Task<Post> GetPostAsync(int id);
-        Task<Post> GetPostAsync(string hash);
+        Task<Post?> GetPostAsync(int id);
+        Task<Post?> GetPostAsync(string hash);
         Task<List<Post>> GetAllAsync(int take = 5, int offset=0);
         Task<List<Post>> GetUnreadAsync(int take = 5, int offset = 0);
         Task<List<Post>> GetFavoriteAsync(int take = 5, int offset = 0);
@@ -22,14 +22,14 @@ namespace ThirdWay.Web.Service
     {
         private readonly ReaderContext _context = context;
 
-        public async Task<Post> GetPostAsync(int id)
+        public async Task<Post?> GetPostAsync(int id)
         {
             var post = await _context.Posts.FirstOrDefaultAsync(p => p.Id == id)!;
 
             return post;
         }
 
-        public async Task<Post> GetPostAsync(string hash)
+        public async Task<Post?> GetPostAsync(string hash)
         {
             var post = await _context.Posts.FirstOrDefaultAsync(p => p.UriHash == hash)!;
 
@@ -48,22 +48,31 @@ namespace ThirdWay.Web.Service
         public async Task MarkReadAsync(int id)
         {
             var post = await GetPostAsync(id);
-            post.IsRead = true;
-            await _context.SaveChangesAsync();
+            if (post != null)
+            {
+                post.IsRead = true;
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task MarkUnreadAsync(int id)
         {
             var post = await GetPostAsync(id);
-            post.IsRead = false;
-            await _context.SaveChangesAsync();
+            if (post != null)
+            {
+                post.IsRead = false;
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task ToggleFavoriteAsync(int id)
         {
             var post = await GetPostAsync(id);
-            post.IsFavorite = !post.IsFavorite;
-            await _context.SaveChangesAsync();
+            if (post != null)
+            {
+                post.IsFavorite = !post.IsFavorite;
+                await _context.SaveChangesAsync();
+            }
         }
 
         public void Dispose()

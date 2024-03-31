@@ -5,7 +5,7 @@ namespace ThirdWay.Web.Service
 {
     public interface IFeedService
     {
-        Task<Data.Model.Feed> GetFeedAsync(int id);
+        Task<Data.Model.Feed?> GetFeedAsync(int id);
         Task<List<Data.Model.Feed>> GetAllAsync();
         Task UpsertFeedAsync(string feedUrl);
         void Dispose();
@@ -17,7 +17,7 @@ namespace ThirdWay.Web.Service
     {
         private readonly ReaderContext _context = context;
 
-        public async Task<Data.Model.Feed> GetFeedAsync(int id)
+        public async Task<Data.Model.Feed?> GetFeedAsync(int id)
         {
             return await _context.Feeds.FirstOrDefaultAsync(p => p.Id == id)!;
         }

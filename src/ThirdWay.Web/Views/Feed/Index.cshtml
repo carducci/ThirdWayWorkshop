@@ -23,26 +23,27 @@
         </form>
     </div>
     <hr class="white-txt top-margin-20 bottom-margin-20">
-    @foreach (var feed in Model.Feeds)
+    @if (Model?.Feeds != null)
     {
-        <div class="row" id="Feed-@feed.Id">
-            <div class="col-12">
-                <h1 class="article-title white-txt">@feed.Title</h1>
-                <p class="gold-txt">@feed.LastUpdated.ToShortDateString()</p>
-                <p class="article-desc white-txt">@feed.Description</p>
-                <div class="article-options">
-                    <div class="shareIcons">
-                        <form method="post" action="/Feed/Id/@feed.Id/DeleteFeed" style="display: inline;">
-                            <button type="submit" class="btn btn-link" aria-label="Delete Feed" title="Delete Feed">
-                                <i class="fa-solid fa-trash gold-txt"></i>
-                            </button>
-                        </form>
+        @foreach (var feed in Model.Feeds)
+        {
+            <div class="row" id="Feed-@feed.Id">
+                <div class="col-12">
+                    <h1 class="article-title white-txt">@feed.Title</h1>
+                    <p class="gold-txt">@feed.LastUpdated.ToShortDateString()</p>
+                    <p class="article-desc white-txt">@feed.Description</p>
+                    <div class="article-options">
+                        <div class="shareIcons">
+                            <form method="post" action="/Feed/Id/@feed.Id/DeleteFeed" style="display: inline;">
+                                <button type="submit" class="btn btn-link" aria-label="Delete Feed" title="Delete Feed">
+                                    <i class="fa-solid fa-trash gold-txt"></i>
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
+                <hr class="white-txt top-margin-20 bottom-margin-20">
             </div>
-            <hr class="white-txt top-margin-20 bottom-margin-20">
-        </div>
+        }
     }
-
-
 </div>

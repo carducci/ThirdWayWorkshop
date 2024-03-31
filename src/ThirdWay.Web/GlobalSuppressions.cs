@@ -6,3 +6,4 @@
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>", Scope = "member", Target = "~M:ThirdWay.Web.Extensions.AppServiceExtensions.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)~Microsoft.Extensions.DependencyInjection.IServiceCollection")]
+[assembly: SuppressMessage("Performance", "CA1862:Use the 'StringComparison' method overloads to perform case-insensitive string comparisons", Justification = "<Pending>", Scope = "member", Target = "~M:ThirdWay.Web.Service.PostService.SearchPosts(System.String)~System.Threading.Tasks.Task{System.Collections.Generic.List{ThirdWay.Data.Model.Post}}")]
