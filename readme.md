@@ -91,7 +91,9 @@ From here, you should be able to run the project using the `dotnet run` command
 gitpod /workspace/ThirdWayWorkshop (main) $ dotnet run
 ```
 
-At this point, the project will be built and the container started. Gitpod will prompt you to "Open Preview" which will embed a browser in your environment. Alternatively the preview can be opened in a new window. 
+At this point, the project will be built and the container started. Gitpod will prompt you to "Open Preview" which will embed a browser in your environment. Alternatively the preview can be opened in a new window.
+
+I recommend creating a new window for the application preview and keeping this window open for the duration of this workshop. The URL will remain the same throughout your gitpod session and the page refreshed anytime you restart the application from the VS Code terminal.
 
 The reader is not yet subscribed to any feeds, go ahead and add one. 
 
@@ -252,4 +254,190 @@ The block of code beginning on line 33 becomes:
 
 We are now using this tool securely and responsibly as this is the only place in the application where unsanitized output is presented using `@Html.Raw()`.
 
+## Lab 5 - Beyond GET and POST and Enhanced UX
 
+The Uniform Interface constraint of REST focuses on a handful of primary components:
+
+- The Resource Abstraction
+- Stable URIs as Resource Identifiers
+- Semantically constrained interactions driven by passing representations of resources back and forth
+
+In general, this application follows a consistent pattern for resource identifiers as follows:
+
+`/{collection/class}/{collection sub-partition}/{sub-partition identifier}`
+
+We have `/Post` which will retrieve a collection of posts.
+We have `/Post/Id/1` which will retrieve an individual post instance.
+
+Likewise we have `/Feed` which will retrieve a collection of feeds.
+
+However, the current HTML standard only supports `GET` and `POST` operations within the built-in hypermedia controls, which means we have to deviate from the uniform interface somewhat and introduce an awkward endpoint `/Feed/Id/1/Delete` which is accessed with a POST operation. We are nolonger so constrained as HTMX allows us to perform a semantically consistent `DELETE` operation.
+
+### 5.1 Updating our Controller
+
+Let's create a new endpoint in `Controllers/Feed.cs` to perform a `DELETE` operation on a named feed resource.
+
+On a new line after line 67 in `Controllers/Feed.cs` add the following:
+
+```csharp
+	[HttpDelete("/Feed/Id/{id}")]
+	public async Task<IActionResult> DeleteFeed(int id)
+	{
+		try
+		{
+			await _feedService.DeleteFeed(id);
+			await Bottleneck();
+		}
+		catch(Exception){
+			//Something went wrong here. Most likely a 404
+			//A delete is supposed to be idempotent so we will ignore this
+		}
+		// Return a 204 No Content response
+		return NoContent();
+	}
+```
+
+Let's also annotate the legacy Web 1.0 POST endpoint on line 59 as deprecated since it remains for compatibility but is no longer the preferred and canonical endpoint.
+
+```csharp
+...
+	[HttpPost("/Feed/Id/{id}/DeleteFeed")]
+	public async Task<IActionResult> Delete(int id)
+	{
+...
+```
+
+becomes 
+
+```csharp
+...
+	[HttpPost("/Feed/Id/{id}/DeleteFeed")]
+	[Obsolete("This endpoint exists for compatibility/graceful degration only. A proper DELETE request on the resources is preferred")]
+	public async Task<IActionResult> Delete(int id)
+	{
+...
+```
+
+
+
+### 5.2 Updating our View 
+
+Next we will enhance our feed list to properly delete the resource.
+
+Open `Views/Feed/index.cshtml` and navigate to line 37 to the existing Web 1.0 form implementation. It should look like this:
+
+```html
+...
+	<form method="post" action="/Feed/Id/@feed.Id/DeleteFeed" style="display: inline;">
+		<button type="submit" class="btn btn-link" aria-label="Delete Feed" title="Delete Feed">
+			<i class="fa-solid fa-trash gold-txt"></i>
+		</button>
+	</form>
+...
+```
+
+Although the button is part of a (boosted) form, we can progressively enhance the behavior of this button by adding the `hx-delete` attribute which, when HTMX is loaded, will override the default behavior and issue a proper `DELETE` request.
+
+Our button, which begins on line 37:
+
+```html
+...
+	<button type="submit" class="btn btn-link" aria-label="Delete Feed" title="Delete Feed">
+		<i class="fa-solid fa-trash gold-txt"></i>
+	</button>
+...
+```
+
+becomes
+
+```html
+...
+	<button type="submit" 
+			class="btn btn-link" 
+			aria-label="Delete Feed" 
+			title="Delete Feed"
+			hx-delete="/Feed/Id/@feed.Id">
+		<i class="fa-solid fa-trash gold-txt"></i>
+	</button>
+...
+```
+
+In this case, the button itself becomes an independant, standalone hypermedia control. When HTMX is running the form itself becomes irrelevant. This is a key capability of HTMX, to enable any element to become a hypermedia control and fully participate in a hypermedia driven application. 
+
+This implementation will gracefully degrade, however if this is not neccessary, the wrapping form and the obsolete method may simply be removed.
+
+### 5.3 Adding Client-Side Behavior
+
+The obsolete Delete method will return a new representation of the `/Feed` collection, but a `DELETE` method does not return a reperesentation of any resource, just a `204` response indicating the request was successful but there is no content to return.
+
+We won't see a change in state of the `/Feed` resource until we make a new request by refreshing the page or navigating to the "Feeds" view from the left-nav.
+
+While our hypermedia interactions are still fairly large-grain, we can get much more fine-grained using the `hx-target` attribute. This defines the scope of the resource we are interacting with and permits very fine-grained interaction. In this case, the `/Feed` resource is a composite of all the invidual Feed resources. The target resource is the parent div of the entry in the list, which we can identify as the closest div with a class of "row".
+
+The `hx-target` attribute will swap the content of the identified element with whatever the response is. In our case no content is returned so the entire row will be removed. 
+
+N.B. As of the current versions of HTMX, a [204 response is interpreted as requiring no action](https://github.com/bigskysoftware/htmx/issues/1130) (since there is no response body). Only successful responses which are defined as having a body will trigger a swap operation. Since we are aiming to provide an idiomatic uniform interface for our application, I have modifed the configuration of HTMX to instruct HTMX to swap on 204 responses. You can see this modification in `wwwroot/js/site.js` and read more about this [here](https://htmx.org/docs/#modifying_swapping_behavior_with_events).
+
+By default, `hx-target` will swap the inner html of the element, but here we can remove the entire row div so we want to replace the outer html. We can further extend the swap operation with a css animation to fade the row out.
+
+Our button:
+
+```html
+...
+	<button type="submit" 
+			class="btn btn-link" 
+			aria-label="Delete Feed" 
+			title="Delete Feed"
+			hx-delete="/Feed/Id/@feed.Id">
+		<i class="fa-solid fa-trash gold-txt"></i>
+	</button>
+...
+```
+
+Becomes:
+
+```html
+...
+	<button type="submit" 
+			class="btn btn-link" 
+			aria-label="Delete Feed" 
+			title="Delete Feed"
+			hx-delete="/Feed/Id/@feed.Id"
+			hx-target="closest div.feedEntry"
+			hx-swap="outerHTML swap:1s">
+		<i class="fa-solid fa-trash gold-txt"></i>
+	</button>
+...
+```
+
+HTMX will automatically apply an `hx-swapping` class during the swap operation (which we've added a delay to to support a fadeout transition). In the application css, this rule is defined as follows:
+
+```css
+...
+	div.feedEntry.htmx-swapping{
+		opacity: 0;
+		transition: opacity 1s ease-out;
+	}
+...
+```
+
+Since a `DELETE` operation has destructive side-effects, we probably want to guard against accidental invokation. HTMX offers an `hx-confirm` attribute that will prompt for confirmation using the old and reliable javascript dialog. Many alternative approaches are available and a few examples can be found [here](https://htmx.org/examples/confirm/).
+
+For simplicity, we'll use the built-in `hx-confirm`. The full attribute is `hx-confirm="Are you sure you want to delete this feed?"` and our button becomes:
+
+```html
+...
+	<button type="submit" 
+			class="btn btn-link" 
+			aria-label="Delete Feed" 
+			title="Delete Feed"
+			hx-delete="/Feed/Id/@feed.Id"
+			hx-target="closest div.feedEntry"
+			hx-swap="outerHTML swap:1s"
+			hx-confirm="Are you sure you want to delete this feed?">
+		<i class="fa-solid fa-trash gold-txt"></i>
+	</button>
+...
+```
+
+Run the application and test deleting a feed. If you need to re-add the atom feed, the url is `https://sufficiently-advanced.technology/feed.xml`.
