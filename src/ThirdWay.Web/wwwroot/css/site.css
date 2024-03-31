@@ -682,4 +682,39 @@ main .full-container {
 div.feedEntry.htmx-swapping{
     opacity: 0;
     transition: opacity 1s ease-out;
-}  
+} 
+
+#BodyLoading {
+    position: fixed;
+    display: none;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    text-align: center;
+    padding-top: 100px;
+    background-color: rgba(32, 32, 32, 0.8);
+    z-index: 9999;
+}
+
+.loading-indicator {
+    display: none;
+}
+  
+.htmx-request .hide-while-loading {
+    display: none !important;
+}
+
+.htmx-request.hide-while-loading {
+    display: none !important;
+}
+
+.tw-indicator{
+    display:none;
+}
+.htmx-request .tw-indicator{
+    display:flex;
+}
+.htmx-request.tw-indicator{
+    display:flex;
+}
