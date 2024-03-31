@@ -48,6 +48,14 @@ namespace ThirdWay.Web.Controllers
             return View("list", posts.OrderByDescending(p => p.PublishDateTime).Take(5).ToList());
 
         }
+        [HttpGet("/Post/Status/Unread/Count")]
+        public PartialViewResult UnreadCount()
+        {
+            int postCount = _postService.GetUnreadCountAsync();
+
+            return PartialView("_countBadge", postCount);
+
+        }
 
         [HttpGet("/Post/Status/Favorite")]
         public async Task<IActionResult> Favorite(int page = 1)
