@@ -26,7 +26,9 @@ else
                     <p class="article-desc white-txt">@post.Description</p>
                     <div class="article-options">
                         <div class="read-more">
-                            <a href="/Post/Id/@post.Id" class="rss-btn gold-bg">Read More</a>
+                            <a href="/Post/Id/@post.Id" 
+                               class="rss-btn gold-bg"
+                               hx-boost="true">Read More</a>
                         </div>
                         <div class="shareIcons">
                             <form method="post" action="/Post/Id/@post.Id/ToggleFavorite" style="display: inline;">
