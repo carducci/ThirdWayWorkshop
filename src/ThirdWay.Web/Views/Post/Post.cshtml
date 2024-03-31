@@ -1,4 +1,6 @@
-﻿@model ThirdWay.Data.Model.Post
+﻿@using Ganss.Xss
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model ThirdWay.Data.Model.Post
 
 <div class="full-container top-margin-20 margin-20">
     <div class="row">
@@ -28,7 +30,12 @@
                         </div>
                     </div>
                     <hr class="articleSeperator">
-                    <div class="text-white post-content">@Html.Raw(Model.Body)</div>
+                    <div class="text-white post-content">
+                        @{
+                            var sanitizer = new HtmlSanitizer();
+                            @Html.Raw(sanitizer.Sanitize(Model.Body))
+                        }
+                    </div>
                 </div>
             </div>
         </div>
