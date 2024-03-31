@@ -94,6 +94,27 @@ Explore the application to ensure your development environment is working correc
 
 ### Application Structure
 
-The ThirdWay.Web project 
+Within the ThirdWay.Web project, we will mainly be working with controllers and views which can be found in the `Controllers` and `Views` folders respectively. 
+
+`FeedController.cs` defines all endpoints that begin with `/Feed` and `PostController.cs` defines all endpoints that begin with `/Post`. 
+
+A single view defines the UI for all Post lists, `/Views/Post/List.cshtml`. Additionaly, `Post.cshtml` defines the UI for viewing a single post.
+
+Feed only offers one view, the list of subscribed feeds, which is defined by `index.cshtml`
+
+Additionally the main layout for the application is defined in `/Views/Shared/_layout.cshtml` which defines our default template.
+
+### Razor Template Syntax
+
+.Net MVC uses the Razor Templating system which provides a number of features and capabilities. In general, the views are just HTML however code/language elements can be introduced by prefixing code with `@`. Code blocks may be opened where necessary but, in most cases, model properties are inserted simply by prefixing the variable with `@` e.g. 
+
+```html
+	...
+	<h1 class="post title">@Model.Title</h1>
+	...
+```
+
+Razor will handle sanitizing and encoding unless `@Html.Raw()` is used, in which case the content will be inserted into the template without encoding or sanitization. Use `@Html.Raw()` with care.
 
 ## Lab 2 - Installing HTMX (5 minutes)
+
