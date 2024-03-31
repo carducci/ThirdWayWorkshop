@@ -14,16 +14,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ThirdWay.Feed\ThirdWay.Feed.csproj" />
-    <ProjectReference Include="..\ThirdWay.Data\ThirdWay.Data.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <UpToDateCheckInput Remove="Views\Post\_countBadge.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Views\Post\_countBadge.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ThirdWay.Data\ThirdWay.Data.csproj" />
+    <ProjectReference Include="..\ThirdWay.Feed\ThirdWay.Feed.csproj" />
   </ItemGroup>
 
 </Project>

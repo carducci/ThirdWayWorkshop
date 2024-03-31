@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\ThirdWay.Data\ThirdWay.Data.csproj" />
+    <ProjectReference Include="..\ThirdWay.Data\ThirdWay.Data.csproj" />
   </ItemGroup>
 
 </Project>

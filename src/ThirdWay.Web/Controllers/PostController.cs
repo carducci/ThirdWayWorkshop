@@ -51,7 +51,7 @@ namespace ThirdWay.Web.Controllers
         [HttpGet("/Post/Status/Unread/Count")]
         public PartialViewResult UnreadCount()
         {
-            int postCount = _postService.GetUnreadCountAsync();
+            int postCount = _postService.GetUnreadCount();
 
             return PartialView("_countBadge", postCount);
 
