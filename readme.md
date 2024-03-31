@@ -215,3 +215,41 @@ Notably HTMX won't boost external links, and cases where you might want to overr
 ```
 
 Save and verify that all internal forms and links are now boosted.
+
+## Lab 4 - Security Considerations (5 minutes)
+
+Navigating our reader app with the network inspector open, you'll notice that HTMX is not only dynamically replacing content in the body tag, it is also loading additional resources and parsing html and applying behaviors to inserted elements. Like most server-side frameworks, the .net core MVC framework is automatically sanitizing anything merged into a template with one glaring exception, the post body. The atom feed gives us the post as HTML which we are inserting into the page in its raw form.
+
+Of course, we are sanitizing this, as you can see in `Views/Post/Post.cshtml` on lines 33-38:
+
+```html
+...
+	<div class="text-white post-content">
+		@{
+			var sanitizer = new HtmlSanitizer();
+			@Html.Raw(sanitizer.Sanitize(Model.Body))
+		}
+	</div>
+...
+```
+
+However our sanitizer doesn't know about HTMX attributes out of the box and, if left unchecked, we introduce a new vector of attack. A bad actor might add HTMX attributes to a feed which would be interpreted by our application. 
+
+To prevent this, we will add a new HTMX attribute to our post content container div, the `hx-disable="true"` attribute. Like many other HTMX attributes, this attribute is inherited to all child elements and, unlike the `hx-boost` attribute, cannot be overridden in a child element. 
+
+The block of code beginning on line 33 becomes:
+
+```html
+...
+	<div class="text-white post-content" hx-disable="true">
+		@{
+			var sanitizer = new HtmlSanitizer();
+			@Html.Raw(sanitizer.Sanitize(Model.Body))
+		}
+	</div>
+...
+```
+
+We are now using this tool securely and responsibly as this is the only place in the application where unsanitized output is presented using `@Html.Raw()`.
+
+

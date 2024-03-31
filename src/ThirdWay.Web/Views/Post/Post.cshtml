@@ -30,7 +30,7 @@
                         </div>
                     </div>
                     <hr class="articleSeperator">
-                    <div class="text-white post-content">
+                    <div class="text-white post-content" hx-disable="true">
                         @{
                             var sanitizer = new HtmlSanitizer();
                             @Html.Raw(sanitizer.Sanitize(Model.Body))
