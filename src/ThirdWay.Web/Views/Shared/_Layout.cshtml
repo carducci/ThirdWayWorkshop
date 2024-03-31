@@ -19,10 +19,15 @@
         <form method="post" action="/Feed/RefreshAll" style="display: inline;">
             <input type="hidden" name="redirectUrl" value="@ViewData["CurrentUrl"]" />
             <button type="submit" class="btn btn-link" aria-label="Refresh Data" title="Refresh Data">
-                    <i class="fa-solid fa-arrows-rotate gold-txt"></i>
+                <i class="fa-solid fa-arrows-rotate gold-txt"></i>
             </button>
         </form>
-        <input type="text" placeholder="Search" class="input-fc secondary-bg">
+        <form method="get" action="/Post/Search">
+            <input type="text" name="query" placeholder="Search" class="input-fc secondary-bg white-txt">
+            <button type="submit" class="btn btn-link" aria-label="Refresh Data" title="Refresh Data">
+                <i class="fa-solid fa-search gold-txt"></i>
+            </button>
+        </form>
     </div>
 </header>
 <div class="container-fluid">

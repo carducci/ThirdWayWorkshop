@@ -30,9 +30,9 @@ namespace ThirdWay.Web.Service
             var feed = await Reader.GetFeedMetadataAsync();
             var posts = await Reader.GetPostsAsync();
 
-            if (_context.Feeds.Any(f => f.Url == feedUrl))
+            if (_context.Feeds.Any(f => f.Uri == feedUrl))
             {
-                var oldFeed = _context.Feeds.First(f => f.Url == feedUrl);
+                var oldFeed = _context.Feeds.First(f => f.Uri == feedUrl);
                 oldFeed.LastUpdated = feed.LastUpdated;
                 oldFeed.Description = feed.Description ?? "";
                 oldFeed.ImageUrl = feed.ImageUrl;

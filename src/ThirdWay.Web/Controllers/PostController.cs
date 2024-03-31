@@ -123,5 +123,14 @@ namespace ThirdWay.Web.Controllers
             await _postService.MarkUnreadAsync(id);
             return LocalRedirect(redirectUrl);
         }
+
+        [HttpGet("/Post/Search")]
+        public async Task<IActionResult> Search(string query)
+        {
+            ViewData["title"] = $"Search Results";
+            ViewData["CurrentUrl"] = $"/Post/Search?query={query}";
+            var posts = await _postService.SearchPosts(query);
+            return View("List", posts);
+        }
     }
 }

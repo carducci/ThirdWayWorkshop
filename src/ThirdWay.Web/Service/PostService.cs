@@ -15,6 +15,7 @@ namespace ThirdWay.Web.Service
         Task MarkUnreadAsync(int id);
         Task ToggleFavoriteAsync(int id);
         void Dispose();
+        Task<List<Post>> SearchPosts(string search);
     }
 
     public class PostService(ReaderContext context) : IDisposable, IPostService
@@ -69,6 +70,13 @@ namespace ThirdWay.Web.Service
         {
             _context.Dispose();
             GC.SuppressFinalize(this);
+        }
+
+        public async Task<List<Post>> SearchPosts(string search)
+        {
+            //ultra simplistic search
+            var terms = search.ToLower().Split(" ");
+            return await _context.Posts.Where(p => terms.Any(term => p.Title.ToLower().Contains(term))).ToListAsync();
         }
     }
 }

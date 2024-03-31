@@ -14,8 +14,13 @@ namespace ThirdWay.Feed
 
         public string GetHeroImage(FeedItem item)
         {
-            var body = ConvertRelativeToAbsolute(_feed.Link, item.Content);
-            return FindHeroImage(body);
+            try
+            {
+                var body = ConvertRelativeToAbsolute(_feed.Link, item.Content);
+                return FindHeroImage(body);
+            }
+            catch { return ""; }
+            
         }
 
         private static string FindHeroImage(string htmlFragment)
@@ -31,8 +36,13 @@ namespace ThirdWay.Feed
 
         public string ParseBody(FeedItem item)
         {
-            var body = ConvertRelativeToAbsolute(_feed.Link, item.Content);
-            body = ConvertAbsoluteToInternal(_feed.Link, body);
+            var body = item.Content;
+            try {
+                body = ConvertRelativeToAbsolute(_feed.Link, item.Content);
+
+                body = ConvertAbsoluteToInternal(_feed.Link, body);
+            }
+            catch { }
             return body;
         }
 

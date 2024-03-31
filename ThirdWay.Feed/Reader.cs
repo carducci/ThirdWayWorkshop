@@ -46,8 +46,8 @@ namespace ThirdWay.Feed
                 {
                     Uri = item.Link,
                     UriHash = Utilities.GetHashFromString(item.Link),
-                    Title = item.Title,
-                    Author = item.Author,
+                    Title = item.Title ?? " - ",
+                    Author = item.Author ?? " - ",
                     PublishDateTime = item.PublishingDate ?? DateTime.UtcNow,
                     LastUpdated = item.PublishingDate ?? DateTime.UtcNow
                 };
@@ -62,7 +62,7 @@ namespace ThirdWay.Feed
                 post.Description = item.Description;
 
                 var parser = new ItemParser(_feed);
-                post.Body = parser.ParseBody(item);
+                post.Body = parser.ParseBody(item) ?? item.Description;
                 post.ImageUrl = parser.GetHeroImage(item);
 
                 posts.Add(post);
