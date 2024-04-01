@@ -17,7 +17,7 @@
     </div>
     <div class="display-right">
         <form method="post" action="/Feed/RefreshAll" style="display: inline;">
-            <input type="hidden" name="redirectUrl" value="@ViewData["CurrentUrl"]" />
+            <input type="hidden" name="redirectUrl" value="@ViewData["CurrentUrl"]"/>
             <button type="submit" class="btn btn-link" aria-label="Refresh Data" title="Refresh Data">
                 <i class="fa-solid fa-arrows-rotate gold-txt"></i>
             </button>
@@ -51,7 +51,7 @@
                 </div>
             </div>
         </div>
-        <main class="col ps-2 pt-2">
+        <main id="main" class="col ps-2 pt-2">
             @RenderBody()
         </main>
     </div>
