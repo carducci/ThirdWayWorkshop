@@ -254,7 +254,7 @@ The block of code beginning on line 33 becomes:
 
 We are now using this tool securely and responsibly as this is the only place in the application where unsanitized output is presented using `@Html.Raw()`.
 
-## Lab 5 - Beyond GET and POST and Enhanced UX
+## Lab 5 - Beyond GET and POST and Enhanced UX (15 mins)
 
 The Uniform Interface constraint of REST focuses on a handful of primary components:
 
@@ -317,8 +317,6 @@ becomes
 	{
 ...
 ```
-
-
 
 ### 5.2 Updating our View 
 
@@ -879,4 +877,50 @@ to
 HTMX will dispatch the event on the triggering element, which will bubble up to the body. 
 
 View some posts and observe this event in action.
+
+## Lab 9 - The `revealed` Event and Infinite Scroll (10 mins)
+
+Let's look at one more example of HTMX events in action as we implement infinite scroll on our posts list view.
+
+The infinite scroll pattern provides a way to load content dynamically on user scrolling action. 
+
+Open `Views/Post/List.cshtml` and head to line 85. Currently our "more" link triggers on the default `click` event. What if we override this default behavior by specifying a trigger? 
+
+Add an `hx-trigger` property with a value of `revealed`
+
+Our "more" link section now looks like this:
+
+```html
+...
+	@if (ViewData["current-page"]?.ToString() != ViewData["next-page"]?.ToString())
+	{
+		<div class="row">
+			<div class="col-12">
+				<a href="@ViewData["more-link"]" 
+					class="white-txt"
+					hx-get="@ViewData["more-link"]"
+					hx-target="closest div.row"
+					hx-select=".postList"
+					hx-indicator="#MorePostsLoading"
+					hx-swap="outerHTML"
+					hx-trigger="revealed">more</a>
+				<span id="MorePostsLoading" class="tw-indicator spinner-border gold-txt" role="status" aria-hidden="true"></span>
+				<hr class="white-txt top-margin-20 bottom-margin-20">
+			</div>
+		</div>
+	}
+...
+```
+
+N.B. (from the docs)
+
+> `revealed` - triggered when an element is scrolled into the viewport (also useful for lazy-loading). If you are using `overflow` in css like `overflow-y: scroll` you should use `intersect once` instead of `revealed`.
+
+## More Resources
+
+- [HTMX official docs](https://htmx.org/examples/infinite-scroll/)
+- [Hypermedia Systems Book](https://hypermedia.systems/)
+- [Awesome HTMX](https://github.com/rajasegar/awesome-htmx)
+- [Third Way Web Development (part i)](https://sufficiently-advanced.technology/post/third-way-web-development-part-i)
+- [Third Way Web Development (part ii)](https://sufficiently-advanced.technology/post/third-way-web-development-part-ii)
 
