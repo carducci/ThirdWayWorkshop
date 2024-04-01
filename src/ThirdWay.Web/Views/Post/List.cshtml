@@ -14,6 +14,7 @@ else
     <div class="full-container top-margin-20">
         <h1 class="centered white-txt">@ViewData["Title"]</h1>
         <hr class="titleSeparator bottom-margin-20">
+        <div class="postList">
         @foreach (var post in Model)
         {
             <div class="row" id="Post-@post.Id">
@@ -72,7 +73,7 @@ else
                 <hr class="white-txt top-margin-20 bottom-margin-20">
             </div>
         }
-
+        </div>
         @if (ViewData["current-page"]?.ToString() != ViewData["next-page"]?.ToString())
         {
             <div class="row">
