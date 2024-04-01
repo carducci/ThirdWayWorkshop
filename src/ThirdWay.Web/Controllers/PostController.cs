@@ -87,6 +87,7 @@ namespace ThirdWay.Web.Controllers
             if (post is { IsRead: false })
             {
                 await _postService.MarkReadAsync(post.Id);
+                HttpContext.Response.Headers.Append("HX-Trigger", "postRead");
             }
             
             ViewData["title"] = post.Title;

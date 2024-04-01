@@ -1,3 +1,5 @@
 ﻿@model int
 
-<span class="badge bg-secondary">@Model</span>
+@if(Model > 0){
+    <span class="badge bg-secondary">@Model</span>
+}

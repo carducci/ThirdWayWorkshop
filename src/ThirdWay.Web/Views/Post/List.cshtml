@@ -29,7 +29,11 @@ else
                             <div class="read-more">
                                 <a href="/Post/Id/@post.Id" 
                                 class="rss-btn gold-bg"
-                                hx-boost="true">Read More</a>
+                                hx-get="/post/id/@post.Id"
+                                hx-select="#main"
+                                hx-target="#main"
+                                hx-swap="outerHTML"
+                                hx-push-url="true">Read More</a>
                             </div>
                             <div class="shareIcons">
                                 <form method="post" action="/Post/Id/@post.Id/ToggleFavorite" style="display: inline;">
