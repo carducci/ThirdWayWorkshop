@@ -27,7 +27,7 @@
     {
         @foreach (var feed in Model.Feeds)
         {
-            <div class="row" id="Feed-@feed.Id">
+            <div class="row feedEntry" id="Feed-@feed.Id">
                 <div class="col-12">
                     <h1 class="article-title white-txt">@feed.Title</h1>
                     <p class="gold-txt">@feed.LastUpdated.ToShortDateString()</p>
