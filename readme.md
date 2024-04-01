@@ -254,7 +254,7 @@ The block of code beginning on line 33 becomes:
 
 We are now using this tool securely and responsibly as this is the only place in the application where unsanitized output is presented using `@Html.Raw()`.
 
-## Lab 5 - Beyond GET and POST and Enhanced UX
+## Lab 5 - Beyond GET and POST and Enhanced UX (15 mins)
 
 The Uniform Interface constraint of REST focuses on a handful of primary components:
 
@@ -317,8 +317,6 @@ becomes
 	{
 ...
 ```
-
-
 
 ### 5.2 Updating our View 
 
@@ -441,3 +439,488 @@ For simplicity, we'll use the built-in `hx-confirm`. The full attribute is `hx-c
 ```
 
 Run the application and test deleting a feed. If you need to re-add the atom feed, the url is `https://sufficiently-advanced.technology/feed.xml`.
+
+### Wrap-Up
+
+We're beginning to see elements of the dynamic and responsive UX we've been seeking to build in HTML for decades; all without needing to write any JavaScript. This isn't to say HTMX aims to replace JavaScript, there are plenty of instances where client-side functionality is valuable--even necessary--in more complex web applications. We just nolonger need verbose and brittle imperative JavaScript or a bloated framework to make our hypermedia application behave in a modern way.
+
+HTMX also returns us to a clean and understandable Locality of Behavior (LOB). Early use of libraries like jQuery often involved separating jQuery code from html. This, in theory, made graceful degration and progressive enhancement easier but often it made the code more difficult to understand as it was not clear where overriding behavior was being defined and invoked from. HTMX makes this no-longer an either/or proposition. 
+
+## Lab 6 - Loading Indicators and UI Blocking (10 mins)
+
+Although we have an entirely AJAX-powered application which now supports varying levels of resource-granularity beyond the default page-level, it would be nice to communicate to the user when something is happening.
+
+HTMX includes `hx-indicator` as an attribute to define an element via a css selector to be shown while requests are in-flight. Additionally, child elements to the hypermedia contol (like icons inside the form button) with the `htmx-indicator` class applied will be automatically toggled in the absense of an `hx-indicator` property.
+
+> Use Request Indicators!
+> Request indicators are an important UX aspect of any distributed application. It is unfortunate that browsers have de-emphasized their native request indicators over time, and it is doubly unfortunate that request indicators are not part of the JavaScript ajax APIs.
+> 
+> Be sure not to neglect this significant aspect of your application. Requests might seem instant when you are working on your application locally, but in the real world they can take quite a bit longer due to network latency. It’s often a good idea to take advantage of browser developer tools that allow you to throttle your local browser’s response times. This will give you a better idea of what real world users are seeing, and show you where indicators might help users understand exactly what is going on.
+
+### 6.1 - Simple Indicators and Element Blocking
+
+Open `Views/Feed/index.cshtml` and navigate to line 46. We're going to add a simple indicator by adding a spinner, in our case one provided by bootstrap. `<span class="tw-indicator spinner-border gold-txt" role="status" aria-hidden="true"></span>`
+
+```html
+...
+	<button type="submit" 
+			class="btn btn-link" 
+			aria-label="Delete Feed" 
+			title="Delete Feed"
+			hx-delete="/Feed/Id/@feed.Id"
+			hx-target="closest div.feedEntry"
+			hx-swap="outerHTML swap:1s"
+			hx-confirm="Are you sure you want to delete this feed?">
+		<i class="fa-solid fa-trash gold-txt"></i>
+	</button>
+...
+```
+
+becomes 
+
+```html
+...
+	<button type="submit" 
+			class="btn btn-link" 
+			aria-label="Delete Feed" 
+			title="Delete Feed"
+			hx-delete="/Feed/Id/@feed.Id"
+			hx-target="closest div.feedEntry"
+			hx-swap="outerHTML swap:1s"
+			hx-confirm="Are you sure you want to delete this feed?">
+		<i class="fa-solid fa-trash gold-txt"></i>
+		<span class="tw-indicator spinner-border gold-txt" role="status" aria-hidden="true"></span>
+	</button>
+...
+```
+
+By default, HTMX uses opacity to hide or show indicators defined by the class `htmx-indicator`, but I typically prefer to hide the element entirely. We can selectively override these defaults in our CSS by using a custom class. In this case, `tw-indicator`. 
+
+```css
+...
+	.tw-indicator{
+		display:none;
+	}
+	.htmx-request .tw-indicator{
+		display:flex;
+	}
+	.htmx-request.tw-indicator{
+		display:flex;
+	}
+...
+```
+
+These rules are already in the workshop's site.css.
+
+Additionally, although our DELETE operation is idempotent, we probably want to prevent multiple submissions. We can accomplish this using the `hx-disabled-elt` attribute to disable individual elements while a request is taking place. In our case, it's the button itself. We'll add `hx-disabled-elt="this"` as another property.
+
+Our button becomes 
+
+```html
+...
+	<button type="submit" 
+			class="btn btn-link" 
+			aria-label="Delete Feed" 
+			title="Delete Feed"
+			hx-delete="/Feed/Id/@feed.Id"
+			hx-target="closest div.feedEntry"
+			hx-swap="outerHTML swap:1s"
+			hx-confirm="Are you sure you want to delete this feed?"
+			hx-disabled-elt="this">
+		<i class="fa-solid fa-trash gold-txt"></i>
+		<span class="tw-indicator spinner-border gold-txt" role="status" aria-hidden="true"></span>
+	</button>
+...
+```
+
+Let's get slightly more fancy by hiding the delete icon entirely while the request in in-flight. HTMX will automatically apply the class `htmx-request` to the element while the request is active. We can define the following CSS rules:
+
+```css
+...
+    .htmx-request .hide-while-loading {
+		display: none;
+	}
+	.htmx-request.hide-while-loading {
+		display: none;
+	}
+...
+```
+
+This rule is already in the site CSS, so we only need to add the class to the delete icon. Our button finally becomes:
+
+```html
+...
+	<button type="submit" 
+			class="btn btn-link" 
+			aria-label="Delete Feed" 
+			title="Delete Feed"
+			hx-delete="/Feed/Id/@feed.Id"
+			hx-target="closest div.feedEntry"
+			hx-swap="outerHTML swap:1s"
+			hx-confirm="Are you sure you want to delete this feed?">
+		<i class="fa-solid fa-trash gold-txt hide-while-loading"></i>
+		<span class="tw-indicator spinner-border gold-txt" role="status" aria-hidden="true"></span>
+	</button>
+...
+```
+
+Run the project again and add/remove feeds. For reference, the example atom feed url is `https://sufficently-advanced.technology/feed.xml`.
+
+### 6.2 - Apply Spinner and Blocking to "+ Add Feed" Form
+
+By now, you've been introduced to the following HTMX properties:
+
+- `hx-boost`
+- `hx-disable`
+- `hx-delete`
+- `hx-confirm`
+- `hx-swap`
+- `hx-target`
+
+You understand property inheritance, and you've seen some of the built-in css classes HTMX uses.
+
+While turning an individual button into a standalone hypermedia control, forms are often useful. "Add Feed" is a form that must be serialized and posted. In `Views/Feed/Index.cshtml` the form on line 10 is already boosted, but we can add some additional HTMX bells and whistles. In this case, we'll explicitly target specific elements and loader elements. 
+
+1. Add the following attributes to the form element:
+
+- `hx-indicator="#AddFeedIndicator"`
+- `hx-disable-elt="#AddFeedSubmit"`
+
+2. Add the id `AddFeedSubmit` to the submit button
+3. Add the following spinner in the same container as the button: `<span id="AddFeedIndicator" class="tw-indicator spinner-border gold-txt" role="status" aria-hidden="true"></span>`
+
+Our form becomes:
+
+```html
+...
+	<form method="post" class="row g-3">
+		<div class="col-auto">
+			@Html.LabelFor(m => m.NewUrl, new {@class="col-form-label"})
+		</div>
+		<div class="col-auto">
+			@Html.TextBoxFor(m => m.NewUrl, new {@class="form-control form-control-lg", type="url"})
+			@Html.ValidationMessageFor(m => m.NewUrl, "", new {@class="text-danger"})
+		</div>
+		<div class="col-auto">
+			<button type="submit" class="btn btn-light btn-lg" aria-label="Add Feed" title="Add Feed" id="AddFeedSubmit">
+				<i class="fa-regular fa-plus"></i> Add Feed
+			</button>
+			<span id="AddFeedIndicator" class="tw-indicator spinner-border gold-txt" role="status" aria-hidden="true"></span>
+		</div>
+	</form>
+...		
+```
+
+Test your dynamic UI and indicators by adding and removing feeds.
+
+## Lab 7 - Paging and Partial Updates (10 mins)
+
+Our feed page is fairly polished. Let's see some more of what HTMX has to offer by bringing the rest of our application up to par. We'll take a look at the post views next.
+
+Requesting a representation of the current state of `/Post` will present us with the first page of posts. Within this resource is an affordance to see the second page. This is currently a Web 1.0 hypermedia control, although the global `hx-boost` attribute will optimize this slightly. Let's tighten the scope of this control by appending posts from page two directly into the current page. To achieve this, we're going to modify the "more" anchor tag, transforming it into a more powerful hypermedia control.
+
+Beginning on line 76 you'll see our current implementation of paging. It's a little basic and hamfisted, but you get the idea.
+
+```html
+...
+	@if (ViewData["current-page"]?.ToString() != ViewData["next-page"]?.ToString())
+	{
+		<div class="row">
+			<div class="col-12">
+				<a href="@ViewData["more-link"]" class="white-txt">more</a>
+				<hr class="white-txt top-margin-20 bottom-margin-20">
+			</div>
+		</div>
+	}
+...
+```
+
+First, you'll see some logic to figure out whether there is an additional page of results. Line 80 contains the anchor we want to work with.
+
+Again, for the purposes of this demo, we're aiming for graceful degration so we'll keep the unmodified behavior working, but since we have HTMX we can extend the behavior considerably.
+
+To start-with, we want to override the default behavior beyond the inherited `hx-boost` by adding an `hx-get` property to our link. In this case, we'll use the same URL as the `href`.
+
+```html
+...
+	<a href="@ViewData["more-link"]" class="white-txt">more</a>
+...
+```
+
+becomes:
+
+```html
+...
+	<a href="@ViewData["more-link"]" 
+	   class="white-txt"
+	   hx-get="@ViewData["more-link"]">more</a>
+...
+```
+
+By default, the target of any HTMX hypermedia control is the initiating element, so we want to specify an alternate target. In this case, we want to completely replace the paging section with the next page of results (which will include a new "more" link if applicable). Add the property `hx-target="closest div.row"`
+
+```html
+...
+	<a href="@ViewData["more-link"]" 
+		class="white-txt"
+		hx-get="@ViewData["more-link"]">more</a>
+...
+```
+
+becomes:
+
+```html
+...
+	<a href="@ViewData["more-link"]" 
+		class="white-txt"
+		hx-get="@ViewData["more-link"]"
+		hx-target="closest div.row">more</a>
+...
+```
+
+Now, we need to define the swap behavior. Because the backend is currently written as a Web 1.0 application, the server will send the full page as a response, we don't actually want to inject the entire page into this div, we just want the posts. We could define custom endpoints, introduce content-negotiation, or make our backend more aware of HTMX; all these options introduce added efficiency by minimizing the response payload. For now, however, we're going to look at a simple alternative. 
+
+HTMX gives us a marvelously useful property to extract and swap only part of the response. Although not the most efficient option, it does provide a level of simplicity which can be useful when modernizing a legacy application or supporting full graceful degradation. We're going to use `hx-select` which allows you to select the content you want swapped from a response. In our case, it will be what's inside the list container div with a class of `postList`.
+
+Add `hx-select=".postList` to the properties of the "more" anchor tag.
+
+```html
+...
+	<a href="@ViewData["more-link"]" 
+		class="white-txt"
+		hx-get="@ViewData["more-link"]"
+		hx-target="closest div.row">more</a>
+...
+```
+
+becomes:
+
+```html
+...
+	<a href="@ViewData["more-link"]" 
+		class="white-txt"
+		hx-get="@ViewData["more-link"]"
+		hx-target="closest div.row"
+		hx-select=".postList">more</a>
+...
+```
+
+Finally, we want to completely replace the row containing the "more" link, so we'll use the `outerHTML` swap. Add `hx-swap="outerHTML"` to the anchor tag.
+
+For bonus points (and if time allows) use the techniques from the previous lab to show a loading indicator.
+
+One final note, you'll see the current page URL has not changed. If you want to update the route to page 2, you can add the attribute `hx-push-url="true"` which will keep our location history in sync with our dynamic navigation.
+
+## Lab 8 Triggers, Lazy loading and Events (10 mins)
+
+Let's suppose we wanted to add a feature to our reader. On the "All" navigation item we'd like to see a badge indicating the number of unread posts. We could calculate that during the page rendering on the server, but that would increase the work the server and database have to do before sending a response to the client, reducing user-perceived performance. We could lazy-load that badge after the page loads. 
+
+So far, we've created "clickable" hypermedia controls. This is due to the defaults built into HTMX. HTMX AJAX requests are triggered by the “natural” event of an element:
+
+- `input`, `textarea` & `select` are triggered on the `change` event
+- `form` is triggered on the sub`mit event
+- everything else is triggered by the `click` event
+
+While our badge will likely be a span, we don't want to have to click on it to load our value. HTMX provides a number of [additional triggers.](https://htmx.org/docs/#triggers) Our badge could trigger on a `load` event (or even a `revealed` event, for true lazy loading).
+
+`load` is fine for our purposes. The project already has a partial view and controller method in place. Let's connect HTMX.
+
+### 8.1 Adding a lazy-loaded element
+
+Open `Views/Shared/_Layout.cshtml` our first navigation item begins at line 39:
+
+```html
+...
+	<a href="@Url.Action("All", "Post")" class="border-end-0 d-inline-block text-truncate navLink" data-bs-parent="#sidebar">
+		<i class="fa-regular fa-folder-open gold-txt"></i> <span>All</span>
+	</a>
+...
+```
+
+Next to the nav label, we'll add a span to act as a container with an id of `AllUnreadBadge`. Getting the badge is a `GET` operation, so add an attribute of `hx-get="/Post/Status/Unread/Count"`. Next, since we want to trigger on a `load` event instead of a `click` event, we'll specify our `hx-trigger` with the following attribute `hx-trigger="load"`.
+
+Our navigation item now looks like this:
+
+```html
+...
+	<a href="@Url.Action("All", "Post")" 
+	    class="border-end-0 d-inline-block text-truncate navLink" data-bs-parent="#sidebar">
+		<i class="fa-regular fa-folder-open gold-txt"></i> <span>All</span>
+		<span id="AllUnreadBadge"
+				hx-get="/Post/Status/Unread/Count"
+				hx-trigger="load">
+	</a>
+...
+```
+
+Now, when the page loads, this count will be asynchronously retrieved. 
+
+### 8.2 Custom Events
+
+Currently, most of the navigation in this app uses boosted links, meaning the entire page will be redrawn every time you click on a link (leaving the header intact, save for the page title). Let's use what we've learned to add some more fine-grained navigation.
+
+Open `/Views/Post/List.cshtml` and go to our first boosted link on line 30.
+
+```html
+...
+	<div class="read-more">
+		<a href="/Post/Id/@post.Id" 
+		class="rss-btn gold-bg"
+		hx-boost="true">Read More</a>
+	</div>
+...
+```
+
+Rather than making this just a simple boosted link, make this an `hx-get` with a target of `#main`, an `hx-select` of `#main`, and we want to swap the outerhtml (replace all of `#main`). Finally, we want our history to be accurate, so be sure to set the `hx-push-url` attribute to true.
+
+Our "read more" link now looks like this:
+
+```html
+...
+	<div class="read-more">
+		<a href="/Post/Id/@post.Id" 
+		class="rss-btn gold-bg"
+		hx-get="/post/id/@post.Id"
+		hx-select="#main"
+		hx-target="#main"
+		hx-swap="outerHTML"
+		hx-push-url="true">Read More</a>
+	</div>
+...
+```
+
+When we navigate to an individual post, we are now only swapping out the content of `#main`, leaving not only the `<head>` intact, we also leave the navigation intact.
+
+The only problem is our read count might be out of date if we just opened an unread post. We only want to trigger that badge to refresh if a post's `IsRead` status has changed. We could maintain a complicated clone of state on the client and introduced the complexity of the flux pattern and trying to keep client/server state in sync. Ultimately, our server is the source of truth and, fortunately, HTMX supports custom events and HTML gives us a global event bus. 
+
+One simple way to communicate events to HTMX is using the `HX-Trigger` response header which will emit an event when received. Our badge can also listen for this event.
+
+First, let's produce our custom event. 
+
+Open `Controllers/PostController.cs` and head to line 89. 
+
+```csharp
+...
+	if (post is { IsRead: false })
+	{
+		await _postService.MarkReadAsync(post.Id);
+	}
+...
+```
+
+This line is marking the post as read, only if it is unread. By adding an `HX-Trigger` header to the response, we can specify a custom event.
+
+Add the following after line 89:
+
+```csharp
+...
+	HttpContext.Response.Headers.Add("HX-Trigger", "postRead");
+...
+```
+
+Our controller method now looks like this:
+
+```csharp
+...
+	[HttpGet("/Post/Id/{id}")]
+	public async Task<IActionResult> Post(int id)
+	{
+		var post = await _postService.GetPostAsync(id);
+		if(post == null)
+			return NotFound();
+
+		if (post is { IsRead: false })
+		{
+			await _postService.MarkReadAsync(post.Id);
+			HttpContext.Response.Headers.Append("HX-Trigger", "postRead");
+		}
+		
+		ViewData["title"] = post.Title;
+		ViewData["CurrentUrl"] = $"/Post/Id/{id}";
+		
+		await Bottleneck();
+		return View(post);
+	}
+...
+```
+
+Finally, we can add this event as an additional trigger to our badge. 
+
+In `Views/Shared/_Layout.cshtml` change:
+
+```html
+...
+	<a href="@Url.Action("All", "Post")" 
+		class="border-end-0 d-inline-block text-truncate navLink" data-bs-parent="#sidebar">
+		<i class="fa-regular fa-folder-open gold-txt"></i> <span>All</span>
+		<span id="AllUnreadBadge"
+				hx-get="/Post/Status/Unread/Count"
+				hx-trigger="load">
+	</a>
+...
+```
+
+to 
+
+```html
+...
+	<a href="@Url.Action("All", "Post")" 
+		class="border-end-0 d-inline-block text-truncate navLink" data-bs-parent="#sidebar">
+		<i class="fa-regular fa-folder-open gold-txt"></i> <span>All</span>
+		<span id="AllUnreadBadge"
+				hx-get="/Post/Status/Unread/Count"
+				hx-trigger="load, postRead from:body">
+	</a>
+...
+```
+
+HTMX will dispatch the event on the triggering element, which will bubble up to the body. 
+
+View some posts and observe this event in action.
+
+## Lab 9 - The `revealed` Event and Infinite Scroll (10 mins)
+
+Let's look at one more example of HTMX events in action as we implement infinite scroll on our posts list view.
+
+The infinite scroll pattern provides a way to load content dynamically on user scrolling action. 
+
+Open `Views/Post/List.cshtml` and head to line 85. Currently our "more" link triggers on the default `click` event. What if we override this default behavior by specifying a trigger? 
+
+Add an `hx-trigger` property with a value of `revealed`
+
+Our "more" link section now looks like this:
+
+```html
+...
+	@if (ViewData["current-page"]?.ToString() != ViewData["next-page"]?.ToString())
+	{
+		<div class="row">
+			<div class="col-12">
+				<a href="@ViewData["more-link"]" 
+					class="white-txt"
+					hx-get="@ViewData["more-link"]"
+					hx-target="closest div.row"
+					hx-select=".postList"
+					hx-indicator="#MorePostsLoading"
+					hx-swap="outerHTML"
+					hx-trigger="revealed">more</a>
+				<span id="MorePostsLoading" class="tw-indicator spinner-border gold-txt" role="status" aria-hidden="true"></span>
+				<hr class="white-txt top-margin-20 bottom-margin-20">
+			</div>
+		</div>
+	}
+...
+```
+
+N.B. (from the docs)
+
+> `revealed` - triggered when an element is scrolled into the viewport (also useful for lazy-loading). If you are using `overflow` in css like `overflow-y: scroll` you should use `intersect once` instead of `revealed`.
+
+## More Resources
+
+- [HTMX official docs](https://htmx.org/examples/infinite-scroll/)
+- [Hypermedia Systems Book](https://hypermedia.systems/)
+- [Awesome HTMX](https://github.com/rajasegar/awesome-htmx)
+- [Third Way Web Development (part i)](https://sufficiently-advanced.technology/post/third-way-web-development-part-i)
+- [Third Way Web Development (part ii)](https://sufficiently-advanced.technology/post/third-way-web-development-part-ii)
+
