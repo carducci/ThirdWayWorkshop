@@ -22,7 +22,10 @@
         </a>
     </div>
     <div class="display-right">
-        <form method="post" action="/Feed/RefreshAll" style="display: inline;">
+        <form method="post" 
+              action="/Feed/RefreshAll" 
+              style="display: inline;"
+              hx-indicator="#BodyLoading">
             <input type="hidden" name="redirectUrl" value="@ViewData["CurrentUrl"]" />
             <button type="submit" class="btn btn-link" aria-label="Refresh Data" title="Refresh Data">
                 <i class="fa-solid fa-arrows-rotate gold-txt"></i>
