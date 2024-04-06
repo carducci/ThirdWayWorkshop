@@ -10,6 +10,11 @@
     <script src="https://unpkg.com/htmx.org@1.9.11" integrity="sha384-0gxUXCCR8yv9FM2b+U3FDbsKthCI66oH5IA9fHppQq9DDMHuMauqq1ZHBpJxQ0J0" crossorigin="anonymous"></script>
 </head>
 <body hx-boost="true">
+<div id="BodyLoading" class="body-htmx-loading">
+  <div class="spinner-border" style="width: 8rem; height: 8rem;" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
 <header class="fixed-top">
     <div class="display-left">
         <a href="#" data-bs-target="#sidebar" data-bs-toggle="collapse" class="text-decoration-none">

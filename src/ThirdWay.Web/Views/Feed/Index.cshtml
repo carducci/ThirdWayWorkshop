@@ -16,7 +16,7 @@
                 @Html.ValidationMessageFor(m => m.NewUrl, "", new {@class="text-danger"})
             </div>
             <div class="col-auto">
-                <button type="submit" class="btn btn-light btn-lg" aria-label="Add Feed" title="Add Feed" id="AddFeedSubmit">
+                <button type="submit" class="btn btn-light btn-lg hide-while-loading" aria-label="Add Feed" title="Add Feed" id="AddFeedSubmit">
                     <i class="fa-regular fa-plus"></i> Add Feed
                 </button>
                 <span id="AddFeedIndicator" class="tw-indicator spinner-border gold-txt" role="status" aria-hidden="true"></span>
@@ -43,7 +43,8 @@
                                         hx-delete="/Feed/Id/@feed.Id"
                                         hx-target="closest div.feedEntry"
                                         hx-swap="outerHTML swap:1s"
-			                            hx-confirm="Are you sure you want to delete this feed?">
+			                            hx-confirm="Are you sure you want to delete this feed?"
+                                        hx-disabled-elt="this">
                                     <i class="fa-solid fa-trash gold-txt hide-while-loading"></i>
                                     <span class="tw-indicator spinner-border gold-txt" role="status" aria-hidden="true"></span>
                                 </button>
