@@ -1,5 +1,45 @@
 # Third Way Web Development Labs/Companion Project
 
+- [Third Way Web Development Labs/Companion Project](#third-way-web-development-labscompanion-project)
+  - [Purpose](#purpose)
+  - [Introduction](#introduction)
+    - [The Ajax Library Era](#the-ajax-library-era)
+    - [The First Reactive Frameworks](#the-first-reactive-frameworks)
+    - [Component-based Frameworks](#component-based-frameworks)
+    - [HTMX - Hypermedia 2.0](#htmx---hypermedia-20)
+      - [When to Use HTMX](#when-to-use-htmx)
+  - [Our Web 1.0 Application - an RSS Reader](#our-web-10-application---an-rss-reader)
+    - [Running this application](#running-this-application)
+  - [Lab 1 - Getting Set up (10 mins)](#lab-1---getting-set-up-10-mins)
+    - [Application Structure](#application-structure)
+    - [Razor Template Syntax](#razor-template-syntax)
+  - [Lab 2 - Installing HTMX (5 minutes)](#lab-2---installing-htmx-5-minutes)
+  - [Lab 3 - Introducing hx-boost (10 mins)](#lab-3---introducing-hx-boost-10-mins)
+    - [3.1 Boosting Posts](#31-boosting-posts)
+    - [3.2 More Boosting and Inheritance](#32-more-boosting-and-inheritance)
+  - [Lab 4 - Security Considerations (5 minutes)](#lab-4---security-considerations-5-minutes)
+  - [Lab 5 - Beyond GET and POST and Enhanced UX (15 mins)](#lab-5---beyond-get-and-post-and-enhanced-ux-15-mins)
+    - [5.1 Updating our Controller](#51-updating-our-controller)
+    - [5.2 Updating our View](#52-updating-our-view)
+    - [5.3 Adding Client-Side Behavior](#53-adding-client-side-behavior)
+    - [Wrap-Up](#wrap-up)
+  - [Lab 6 - Loading Indicators and UI Blocking (10 mins)](#lab-6---loading-indicators-and-ui-blocking-10-mins)
+    - [6.1 - Simple Indicators and Element Blocking](#61---simple-indicators-and-element-blocking)
+    - [6.2 - Apply Spinner and Blocking to "+ Add Feed" Form](#62---apply-spinner-and-blocking-to--add-feed-form)
+    - [6.3 - External UI Indicators](#63---external-ui-indicators)
+  - [Lab 7 - Paging and Partial Updates (10 mins)](#lab-7---paging-and-partial-updates-10-mins)
+  - [Lab 8 Triggers, Lazy loading and Events (10 mins)](#lab-8-triggers-lazy-loading-and-events-10-mins)
+    - [8.1 Adding a lazy-loaded element](#81-adding-a-lazy-loaded-element)
+    - [8.2 Custom Events](#82-custom-events)
+  - [Lab 9 - The `revealed` Event and Infinite Scroll (10 mins)](#lab-9---the-revealed-event-and-infinite-scroll-10-mins)
+  - [Conclusion](#conclusion)
+  - [More Resources](#more-resources)
+
+
+## Purpose
+
+This repo was created as playground for exploring the capabilities of [HTMX](https://htmx.org). It is a companion to my [HTMX talks and workshops](https://magician.codes) as well as a standalone tutorial for getting started with HTMX. If you have stumbled across this repo from elsewhere, I have included a brief explanation of the motivation behind HTMX, but a longer exploration can be found at [Third Way Web Development (part i)](https://sufficiently-advanced.technology/post/third-way-web-development-part-i). Additionally I have a detailed exploration of my efforts to modernize a legacy MVC application with HTMX and some real-world lessons learned here: [Third Way Web Development (part ii)](https://sufficiently-advanced.technology/post/third-way-web-development-part-ii).
+
 ## Introduction
 
 HTML, while powerful, is currently insufficient for building modern and dynamic web applications. As currently specified, only large-grain (full page) interactions are supported. AJAX, popularized with the introduced of [Google Maps](https://maps.google.com) in 2005 demonstrated an approach to leveraging asynchronous requests and DOM manipulation in JavaScript to achieve more fine-grained control over page interactions which introduced the Web 2.0 paradigm. Achieving this is pure JavaScript has historically been challenging. The first challenge was inconsistent implementation across browsers.
@@ -360,7 +400,7 @@ becomes
 ...
 ```
 
-In this case, the button itself becomes an independent, standalone hypermedia control. When HTMX is running the form itself becomes irrelevant. This is a key capability of HTMX, to enable any element to become a hypermedia control and fully participate in a hypermedia driven application.
+In this case, the button itself becomes an independent, standalone hypermedia control. When HTMX is running the form itself becomes irrelevant. Alternatively, the form itself can be modified with the `hx-delete` attribute which would probably be the more idiomatic approach since a form exists. Specificially, in this exercise, I wanted to demonstrate a key capability of HTMX; to enable any element to become a hypermedia control and fully participate in a hypermedia driven application.
 
 This implementation will gracefully degrade, however if this is not necessary, the wrapping form and the obsolete method may simply be removed.
 
@@ -579,19 +619,18 @@ By now, you've been introduced to the following HTMX properties:
 
 You understand property inheritance, and you've seen some of the built-in CSS classes HTMX uses.
 
-While turning an individual button into a standalone hypermedia control, forms are often useful. "Add Feed" is a form that must be serialized and posted. In `Views/Feed/Index.cshtml` the form on line 10 is already boosted, but we can add some additional HTMX bells and whistles. In this case, we'll explicitly target specific elements and loader elements.
+While turning an individual button into a standalone hypermedia control, forms are often useful. "Add Feed" is a form that must be serialized and posted. In `Views/Feed/Index.cshtml` the form on line 10 is already boosted which automatically inherits HTMX's bells and whistles. The boosted form will automagically receive the `.htmx-request` class which will toggle the indicator.
 
-1. Add the following attributes to the form element:
-   - `hx-indicator="#AddFeedIndicator"`
-   - `hx-disable-elt="#AddFeedSubmit"`
-2. Add the id `AddFeedSubmit` to the submit button
-3. Add the following spinner in the same container as the button: `<span id="AddFeedIndicator" class="tw-indicator spinner-border gold-txt" role="status" aria-hidden="true"></span>`
+1. Add the following spinner in the same container as the button: `<span id="AddFeedIndicator" class="tw-indicator spinner-border gold-txt" role="status" aria-hidden="true"></span>`
+2. Add the `hide-while-loading` class to the button.
 
 Our form becomes:
 
 ```html
 ...
- <form method="post" class="row g-3">
+ <form method="post" 
+       class="row g-3"
+       >
   <div class="col-auto">
    @Html.LabelFor(m => m.NewUrl, new {@class="col-form-label"})
   </div>
@@ -600,7 +639,10 @@ Our form becomes:
    @Html.ValidationMessageFor(m => m.NewUrl, "", new {@class="text-danger"})
   </div>
   <div class="col-auto">
-   <button type="submit" class="btn btn-light btn-lg" aria-label="Add Feed" title="Add Feed" id="AddFeedSubmit">
+   <button type="submit" 
+          class="btn btn-light btn-lg hide-while-loading" 
+          aria-label="Add Feed" 
+          title="Add Feed">
     <i class="fa-regular fa-plus"></i> Add Feed
    </button>
    <span id="AddFeedIndicator" class="tw-indicator spinner-border gold-txt" role="status" aria-hidden="true"></span>
@@ -609,7 +651,67 @@ Our form becomes:
 ...  
 ```
 
-Test your dynamic UI and indicators by adding and removing feeds.
+### 6.3 - External UI Indicators
+
+Often, the indicator is a child of the extended hypermedia control (e.g. child of the `<form>` or `<button>`) however, it may be useful to define an external or global loading indicator.
+
+As we've seen, HTMX already applies classes to hypermedia controls during the request lifecycle, however we can also specify specific request indicators using the `hx-indicator` property. Let's see this in action by adding a shared, page-level loading indicator. 
+
+First, let's create the shared, page-level loading indicator. Just below the `body` tag, add this element in `Views/Shared/_layout.cshtml`:
+
+```html
+...
+  <div id="BodyLoading" class="body-htmx-loading">
+    <div class="spinner-border" style="width: 8rem; height: 8rem;" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+...
+```
+
+We'll need some CSS rules in `wwwroot/css/site.css` to hide this element and define its behavior as an overlay. For you convenience, these have already been added.
+
+```css
+...
+  #BodyLoading {
+      position: fixed;
+      display: none;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      text-align: center;
+      padding-top: 100px;
+      background-color: rgba(32, 32, 32, 0.8);
+      z-index: 9999;
+  }
+...
+```
+
+When this element is targeted by an `hx-indicator` property, it will apply the css class `htmx-request`. To make our loader work, let's override the `display:none` when the request is active. We can do this by adding another CSS rule:
+
+```css
+...
+  #BodyLoading.htmx-request {
+      display: inline;
+  }
+...
+```
+
+With the necessary infrastructure in place, let's modify our global refresh button on the page header. Head to line 25 in `Views/Shared/_Layout.cshtml` and modify the `form` tag to include the propery `hx-indicator="#BodyLoading"`.
+
+Our `form` becomes:
+
+```html
+...
+  <form method="post" 
+        action="/Feed/RefreshAll" 
+        style="display: inline;"
+        hx-indicator="#BodyLoading">
+...
+```
+
+Rebuild/restart the app and test your dynamic UI and indicators by adding/removing feeds and refreshing feeds from the global refresh icon.
 
 ## Lab 7 - Paging and Partial Updates (10 mins)
 
@@ -682,6 +784,8 @@ HTMX gives us a marvelously useful property to extract and swap only part of the
 
 Add `hx-select=".postList` to the properties of the "more" anchor tag.
 
+Finally, we want to completely replace the row containing the "more" link, so we'll use the `outerHTML` swap. Add `hx-swap="outerHTML"` to the anchor tag.
+
 ```html
 ...
  <a href="@ViewData["more-link"]" 
@@ -699,11 +803,10 @@ becomes:
   class="white-txt"
   hx-get="@ViewData["more-link"]"
   hx-target="closest div.row"
-  hx-select=".postList">more</a>
+  hx-select=".postList"
+  hx-swap="outerHTML">more</a>
 ...
 ```
-
-Finally, we want to completely replace the row containing the "more" link, so we'll use the `outerHTML` swap. Add `hx-swap="outerHTML"` to the anchor tag.
 
 For bonus points (and if time allows) use the techniques from the previous lab to show a loading indicator.
 
@@ -713,7 +816,7 @@ One final note, you'll see the current page URL has not changed. If you want to 
 
 Let's suppose we wanted to add a feature to our reader. On the "All" navigation item we'd like to see a badge indicating the number of unread posts. We could calculate that during the page rendering on the server, but that would increase the work the server and database have to do before sending a response to the client, reducing user-perceived performance. We could lazy-load that badge after the page loads.
 
-So far, we've created "clickable" hypermedia controls. This is due to the defaults built into HTMX. HTMX AJAX requests are triggered by the �natural� event of an element:
+So far, we've created "clickable" hypermedia controls. This is due to the defaults built into HTMX. HTMX AJAX requests are triggered by the "natural" event of an element:
 
 - `input`, `textarea` & `select` are triggered on the `change` event
 - `form` is triggered on the submit event
@@ -771,6 +874,8 @@ Open `/Views/Post/List.cshtml` and go to our first boosted link on line 30.
 
 Rather than making this just a simple boosted link, make this an `hx-get` with a target of `#main`, an `hx-select` of `#main`, and we want to swap the outerHTML (replace all of `#main`). Finally, we want our history to be accurate, so be sure to set the `hx-push-url` attribute to true.
 
+Now that we have a shared, page-level indicator; let's also use this indicator as a post is loading by adding the `hx-indicator` property.
+
 Our "read more" link now looks like this:
 
 ```html
@@ -782,7 +887,8 @@ Our "read more" link now looks like this:
   hx-select="#main"
   hx-target="#main"
   hx-swap="outerHTML"
-  hx-push-url="true">Read More</a>
+  hx-push-url="true"
+  hx-indicator="#BodyLoading">Read More</a>
  </div>
 ...
 ```
