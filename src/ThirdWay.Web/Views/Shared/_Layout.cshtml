@@ -45,19 +45,20 @@
             <div id="sidebar" class="collapse collapse-horizontal show shadow">
                 <div id="sidebar-nav" class="list-group border-0 rounded-0 text-sm-start min-vh-100">
                     <a href="@Url.Action("All", "Post")" 
-                        class="border-end-0 d-inline-block text-truncate navLink" data-bs-parent="#sidebar">
+                        class="border-end-0 d-inline-block text-truncate navLink" data-bs-parent="#sidebar"
+                        hx-indicator="#BodyLoading">
                         <i class="fa-regular fa-folder-open gold-txt"></i> <span>All</span>
                         <span id="AllUnreadBadge"
                                 hx-get="/Post/Status/Unread/Count"
                                 hx-trigger="load, postRead from:body">
                     </a>
-                    <a href="@Url.Action("Unread", "Post")" class="border-end-0 d-inline-block text-truncate navLink" data-bs-parent="#sidebar">
+                    <a href="@Url.Action("Unread", "Post")" class="border-end-0 d-inline-block text-truncate navLink" data-bs-parent="#sidebar" hx-indicator="#BodyLoading">
                         <i class="fa-regular fa-envelope gold-txt"></i> <span>Unread</span>
                     </a>
-                    <a href="@Url.Action("Favorite", "Post")" class="border-end-0 d-inline-block text-truncate navLink" data-bs-parent="#sidebar">
+                    <a href="@Url.Action("Favorite", "Post")" class="border-end-0 d-inline-block text-truncate navLink" data-bs-parent="#sidebar" hx-indicator="#BodyLoading">
                         <i class="fa-regular fa-star gold-txt"></i> <span>Favorites</span>
                     </a>
-                    <a href="@Url.Action("Index", "Feed")" class="border-end-0 d-inline-block text-truncate navLink" data-bs-parent="#sidebar">
+                    <a href="@Url.Action("Index", "Feed")" class="border-end-0 d-inline-block text-truncate navLink" data-bs-parent="#sidebar" hx-indicator="#BodyLoading">
                         <i class="fa-solid fa-rss gold-txt"></i> <span>Manage Feeds</span>
                     </a>
 
@@ -73,4 +74,3 @@
 <script src="~/js/site.js" asp-append-version="true"></script>
 </body>
 </html>
-
