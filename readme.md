@@ -109,9 +109,7 @@ Alternatively, the repo can be developed and debugged entirely online using [Git
 
 Although this can be run entirely locally, if you're not already set up for .net development, I recommend using gitpod.
 
-1. Head to [GitPod.io](https://gitpod.io/) and log in using your GitHub, GitLab, or bitbucket credentials.
-1. Click "New Workspace"
-1. Click "Select a Repository" and enter the repo address (`https://github.com/carducci/ThirdWayWorkshop`) and create the workspace.
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/github.com/carducci/ThirdWayWorkshop)
 
 At this point, an in-browser instance of visual studio code will be launched and configured for this development environment.
 
