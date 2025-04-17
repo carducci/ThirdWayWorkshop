@@ -103,6 +103,8 @@ To run this application locally you'll need:
 
 Alternatively, the repo can be developed and debugged entirely online using [GitPod.io](https://gitpod.io/)
 
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/github.com/carducci/ThirdWayWorkshop)
+
 ## Lab 1 - Getting Set up (10 mins)
 
 Although this can be run entirely locally, if you're not already set up for .net development, I recommend using gitpod.
